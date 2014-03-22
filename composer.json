@@ -1,0 +1,43 @@
+{
+	"name": "venne/package-manager",
+	"description": "Simple package manager for Nette framework",
+	"keywords": ["nette", "packages", "manager"],
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"authors": [
+		{
+			"name": "Josef Kříž",
+			"homepage": "http://josef-kriz.cz"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0",
+		"nette/nette": "~2.1.0",
+		"kdyby/console": "~2.0.1"
+	},
+	"require-dev": {
+		"nette/tester": "~1.0.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Venne\\Packages\\": "src/Packages/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"VenneTests\\": "tests/src/"
+		}
+	},
+	"bin": ["bin/package-manager", "bin/package-manager.php"],
+	"extra": {
+		"branch-alias": {
+			"dev-master": "2.2-dev"
+		},
+		"venne": {
+			"configuration": {
+				"extensions": {
+					"packageManager": "Venne\\Packages\\DI\\PackagesExtension"
+				}
+			}
+		}
+	}
+}
