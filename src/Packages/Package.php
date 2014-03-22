@@ -42,7 +42,7 @@ abstract class Package extends Object implements IPackage
 	{
 		$this->loadComposerData();
 
-		return $this->composerData['description'];
+		return isset($this->composerData['description']) ? $this->composerData['description'] : NULL;
 	}
 
 
@@ -53,7 +53,10 @@ abstract class Package extends Object implements IPackage
 	{
 		$this->loadComposerData();
 
-		return array_map('trim', explode(',', $this->composerData['keywords']));
+		if (isset($this->composerData['keywords'])) {
+			$keywords = $this->composerData['keywords'];
+			return is_array($keywords) ? $keywords : array_map('trim', explode(',', $keywords));
+		}
 	}
 
 
@@ -64,7 +67,7 @@ abstract class Package extends Object implements IPackage
 	{
 		$this->loadComposerData();
 
-		return $this->composerData['license'];
+		return isset($this->composerData['license']) ? $this->composerData['license'] : NULL;
 	}
 
 
@@ -75,7 +78,7 @@ abstract class Package extends Object implements IPackage
 	{
 		$this->loadComposerData();
 
-		return $this->composerData['authors'];
+		return isset($this->composerData['authors']) ? $this->composerData['authors'] : NULL;
 	}
 
 
