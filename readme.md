@@ -1,12 +1,13 @@
-# Venne:PM [![Build Status](https://secure.travis-ci.org/Venne/package-manager.png)](http://travis-ci.org/Venne/package-manager)
+# Venne:Packages [![Build Status](https://secure.travis-ci.org/Venne/packages.png)](http://travis-ci.org/Venne/packages)
 
-Simple package manager for Nette framework.
+Simple solution for managing packages in Nette framework.
 
 What problems can it solve?
 
 - Registering extensions to `Nette\Compiler`
 - Creating default config structure in `config.neon`
 - Publishing directory with assets into `%wwwDir%`
+- Resolving paths to packages by simple syntax
 
 
 ## Installation
@@ -14,8 +15,8 @@ What problems can it solve?
 **Install package manager**
 
 ```sh
-composer require venne/package-manager:@dev           // as a dependency
-# composer create-project venne/package-manager:@dev  // aside from the project
+composer require venne/packages:@dev           // as a dependency
+# composer create-project venne/packages:@dev  // aside from the project
 ```
 
 **add hooks to root `composer.json` file**
@@ -86,9 +87,9 @@ namespace MyProject;
 class Package extends \Venne\Packages\Package {}
 ```
 
-#### 3) In `venne/package-manager-metadata` repository:
+#### 3) In `venne/packages-metadata` repository:
 
-Fork and edit [https://github.com/Venne/package-manager-metadata](https://github.com/Venne/package-manager-metadata)
+Fork and edit [https://github.com/Venne/packages-metadata](https://github.com/Venne/packages-metadata)
 
 
 ## Extra functions
@@ -96,7 +97,7 @@ Fork and edit [https://github.com/Venne/package-manager-metadata](https://github
 Package manager can provide some services which you can use it in your application. Make sure that you have installed package manager as dependency:
 
 ```sh
-composer require venne/package-manager:@dev
+composer require venne/packages:@dev
 ```
 
 Now you are using it as regular package. Not only independent package manager.

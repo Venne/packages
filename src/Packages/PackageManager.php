@@ -579,7 +579,7 @@ class PackageManager extends Object
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-			curl_setopt($ch, CURLOPT_URL, 'https://raw.github.com/venne/package-manager-metadata/master/metadata.json');
+			curl_setopt($ch, CURLOPT_URL, 'https://raw.github.com/venne/packages-metadata/master/metadata.json');
 			$data = curl_exec($ch);
 			if ($data) {
 				$this->globalPackages = Json::decode($data, Json::FORCE_ARRAY);

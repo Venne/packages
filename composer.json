@@ -1,6 +1,6 @@
 {
-	"name": "venne/package-manager",
-	"description": "Simple package manager for Nette framework",
+	"name": "venne/packages",
+	"description": "Simple solution for managing packages in Nette framework",
 	"keywords": ["nette", "packages", "manager"],
 	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 	"authors": [
