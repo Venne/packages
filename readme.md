@@ -109,7 +109,7 @@ Service for resolving paths to packages by `@` syntax. Use `.` as separator betw
 ```php
 $pathResolver = $container->getByType('Venne\Packages\PathResolver');
 echo $pathResolver->expandPath('@my.package/foo/bar');        // /path_to_my_package/foo/bar
-echo $pathResolver->expandResource('@my.package/foo/bar');    // {$resourcesDir}/my.package/foo/bar
+echo $pathResolver->expandResource('@my.package/foo/bar');    // {$resourcesDir}/my/package/foo/bar
 ```
 
 ### Macros
