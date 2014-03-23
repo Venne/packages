@@ -42,7 +42,9 @@ class PackagesExtension extends CompilerExtension
 		$config = $this->getConfig($this->defaults);
 
 		foreach ($config['paths'] as $name => $path) {
-			$container->parameters[$name] = $container->expand($path);
+			if (!isset($container->parameters[$name])) {
+				$container->parameters[$name] = $container->expand($path);
+			}
 		}
 
 		// load packages
