@@ -87,7 +87,7 @@ class PackageManager extends Object
 	private $resourcesDir;
 
 	/** @var string */
-	private $managerDir;
+	private $packagesDir;
 
 	/** @var array */
 	private $_packageConfig;
@@ -107,16 +107,16 @@ class PackageManager extends Object
 	 * @param $configDir
 	 * @param $libsDir
 	 * @param $resourcesDir
-	 * @param $managerDir
+	 * @param $packagesDir
 	 * @param array $packageFiles
 	 */
-	public function __construct(Container $context, $configDir, $libsDir, $resourcesDir, $managerDir, array $packageFiles)
+	public function __construct(Container $context, $configDir, $libsDir, $resourcesDir, $packagesDir, array $packageFiles)
 	{
 		$this->context = $context;
 		$this->configDir = $configDir;
 		$this->libsDir = $libsDir;
 		$this->resourcesDir = $resourcesDir;
-		$this->managerDir = $managerDir;
+		$this->packagesDir = $packagesDir;
 		$this->packageFiles = $packageFiles;
 	}
 
@@ -452,7 +452,7 @@ class PackageManager extends Object
 	 */
 	private function getPackageConfigPath()
 	{
-		return $this->managerDir . '/packages.php';
+		return $this->packagesDir . '/packages.php';
 	}
 
 

@@ -25,7 +25,7 @@ class PackagesExtension extends CompilerExtension
 			'configDir' => '%appDir%/config',
 			'resourcesDir' => '%wwwDir%/resources',
 			'libsDir' => '%appDir%/../vendor',
-			'managerDir' => '%appDir%/../.venne.packages'
+			'packagesDir' => '%appDir%/../.venne.packages'
 		),
 		'packageManager' => array(
 			'packageFiles' => array(
@@ -47,9 +47,9 @@ class PackagesExtension extends CompilerExtension
 
 		// load packages
 		$container->parameters['packages'] = array();
-		$managerDir = $container->expand($config['paths']['managerDir']);
-		if (file_exists($managerDir . '/packages.php')) {
-			$packages = require $managerDir . '/packages.php';
+		$packagesDir = $container->expand($config['paths']['packagesDir']);
+		if (file_exists($packagesDir . '/packages.php')) {
+			$packages = require $packagesDir . '/packages.php';
 			foreach ($packages as $name => $items) {
 				$container->parameters['packages'][$name] = $items;
 				$container->parameters['packages'][$name]['path'] = $container->expand($items['path']);
@@ -58,7 +58,7 @@ class PackagesExtension extends CompilerExtension
 
 		// packages
 		$container->addDefinition($this->prefix('packageManager'))
-			->setClass('Venne\Packages\PackageManager', array('@container', $container->parameters['configDir'], $container->parameters['libsDir'], $container->parameters['resourcesDir'], $container->parameters['managerDir'], $container->expand($config['packageManager']['packageFiles'])));
+			->setClass('Venne\Packages\PackageManager', array('@container', $container->parameters['configDir'], $container->parameters['libsDir'], $container->parameters['resourcesDir'], $container->parameters['packagesDir'], $container->expand($config['packageManager']['packageFiles'])));
 
 		// helpers
 		$container->addDefinition($this->prefix('pathResolver'))

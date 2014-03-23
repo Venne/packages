@@ -9,52 +9,46 @@
  * the file license.txt that was distributed with this source code.
  */
 
-$paths = array(
-	dirname(__DIR__) . '/vendor' => dirname(dirname(__DIR__)),
-	dirname(dirname(dirname(__DIR__))) => dirname(dirname(dirname(dirname(__DIR__)))),
-);
+$rootDir = getcwd();
+$libsDir = $rootDir . '/vendor';
+$wwwDir = $rootDir . '/www';
+$appDir = $rootDir . '/app';
+$packagesDir = $rootDir. '/.venne.packages';
 
-foreach ($paths as $vendor => $managerDir) {
-	if (file_exists($vendor . '/autoload.php')) {
-		require_once $vendor . '/autoload.php';
-		$managerDir = $managerDir . '/.venne.packages';
-		$loaded = TRUE;
-		break;
-	}
-}
-
-if (!isset($loaded)) {
-	die('autoload.php file can not be found.');
-}
-
-if (!file_exists($managerDir)) {
-	if (is_writable(dirname($managerDir))) {
-		mkdir($managerDir);
+if (!file_exists($packagesDir)) {
+	if (is_writable(dirname($packagesDir))) {
+		mkdir($packagesDir);
 	} else {
-		die("Path '$managerDir' does not exists.");
+		die("Path '$packagesDir' does not exists.");
 	}
 }
 
-if (!is_writable($managerDir)) {
-	die("Path '$managerDir' it not writable.");
+if (!is_writable($packagesDir)) {
+	die("Path '$packagesDir' it not writable.");
 }
 
 foreach(array('log', 'temp') as $dir) {
-	if (!file_exists($managerDir . '/' . $dir)) {
-		mkdir($managerDir . '/' . $dir);
+	if (!file_exists($packagesDir . '/' . $dir)) {
+		mkdir($packagesDir . '/' . $dir);
 	}
 }
 
+if (!file_exists($libsDir . '/autoload.php')) {
+	die('autoload.php file can not be found.');
+}
+
+require_once $libsDir . '/autoload.php';
+
 $configurator = new Nette\Configurator;
 $configurator->addParameters(array(
-	'appDir' => dirname($managerDir) . '/app',
-	'wwwDir' => dirname($managerDir) . '/www',
+	'appDir' => $appDir,
+	'wwwDir' => $wwwDir,
 ));
 
 //$configurator->setDebugMode(TRUE);  // debug mode MUST NOT be enabled on production server
-$configurator->enableDebugger($managerDir . '/log');
+$configurator->enableDebugger($packagesDir . '/log');
 
-$configurator->setTempDirectory($managerDir . '/temp');
+$configurator->setTempDirectory($packagesDir . '/temp');
 $configurator->addConfig(dirname(__DIR__) . '/config/config.neon');
 
 $container = $configurator->createContainer();
