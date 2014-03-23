@@ -32,6 +32,7 @@ class HelpersTest extends TestCase
 		return array(
 			array('../a', array('/foo/bar', '/foo/a')),
 			array('../a', array('./foo/bar', './foo/a')),
+			array('..\\a', array('./foo/bar', './foo/a', '\\')),
 		);
 	}
 
