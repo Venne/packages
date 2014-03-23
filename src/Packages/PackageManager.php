@@ -490,53 +490,13 @@ class PackageManager extends Object
 	 */
 	private function getPackageClassByFile($file)
 	{
-		$classes = $this->getClassesFromFile($file);
+		$classes = Helpers::getClassesFromFile($file);
 
 		if (count($classes) !== 1) {
 			throw new InvalidArgumentException("File '{$file}' must contain only one class.");
 		}
 
 		return $classes[0];
-	}
-
-
-	/**
-	 * @param $file
-	 * @return array
-	 * @throws InvalidArgumentException
-	 */
-	private function getClassesFromFile($file)
-	{
-		if (!file_exists($file)) {
-			throw new InvalidArgumentException("File '{$file}' does not exist.");
-		}
-
-		$classes = array();
-
-		$namespace = 0;
-		$tokens = token_get_all(file_get_contents($file));
-		$count = count($tokens);
-		$dlm = FALSE;
-		for ($i = 2; $i < $count; $i++) {
-			if ((isset($tokens[$i - 2][1]) && ($tokens[$i - 2][1] == "phpnamespace" || $tokens[$i - 2][1] == "namespace")) ||
-				($dlm && $tokens[$i - 1][0] == T_NS_SEPARATOR && $tokens[$i][0] == T_STRING)
-			) {
-				if (!$dlm) $namespace = 0;
-				if (isset($tokens[$i][1])) {
-					$namespace = $namespace ? $namespace . "\\" . $tokens[$i][1] : $tokens[$i][1];
-					$dlm = TRUE;
-				}
-			} elseif ($dlm && ($tokens[$i][0] != T_NS_SEPARATOR) && ($tokens[$i][0] != T_STRING)) {
-				$dlm = FALSE;
-			}
-			if (($tokens[$i - 2][0] == T_CLASS || (isset($tokens[$i - 2][1]) && $tokens[$i - 2][1] == "phpclass"))
-				&& $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING
-			) {
-				$class_name = $tokens[$i][1];
-				$classes[] = $namespace . '\\' . $class_name;
-			}
-		}
-		return $classes;
 	}
 
 

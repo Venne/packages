@@ -11,6 +11,8 @@
 
 namespace Venne\Packages;
 
+use Nette\InvalidArgumentException;
+
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
@@ -23,6 +25,7 @@ class Helpers
 	 * @static
 	 * @param $from
 	 * @param $to
+	 * @param $directorySeparator
 	 * @return string
 	 */
 	public static function getRelativePath($from, $to, $directorySeparator = NULL)
@@ -62,6 +65,47 @@ class Helpers
 		}
 
 		return $relPath;
+	}
+
+
+
+	/**
+	 * @param $file
+	 * @return array
+	 * @throws InvalidArgumentException
+	 */
+	public static function getClassesFromFile($file)
+	{
+		if (!file_exists($file)) {
+			throw new InvalidArgumentException("File '{$file}' does not exist.");
+		}
+
+		$classes = array();
+
+		$namespace = NULL;
+		$tokens = token_get_all(file_get_contents($file));
+		$count = count($tokens);
+		$dlm = FALSE;
+		for ($i = 2; $i < $count; $i++) {
+			if ((isset($tokens[$i - 2][1]) && ($tokens[$i - 2][1] == "phpnamespace" || $tokens[$i - 2][1] == "namespace")) ||
+				($dlm && $tokens[$i - 1][0] == T_NS_SEPARATOR && $tokens[$i][0] == T_STRING)
+			) {
+				if (!$dlm) $namespace = NULL;
+				if (isset($tokens[$i][1])) {
+					$namespace = $namespace ? $namespace . "\\" . $tokens[$i][1] : $tokens[$i][1];
+					$dlm = TRUE;
+				}
+			} elseif ($dlm && ($tokens[$i][0] != T_NS_SEPARATOR) && ($tokens[$i][0] != T_STRING)) {
+				$dlm = FALSE;
+			}
+			if (($tokens[$i - 2][0] == T_CLASS || (isset($tokens[$i - 2][1]) && $tokens[$i - 2][1] == "phpclass"))
+				&& $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING
+			) {
+				$class_name = $tokens[$i][1];
+				$classes[] = ($namespace ? $namespace . '\\' : '') . $class_name;
+			}
+		}
+		return $classes;
 	}
 
 }
