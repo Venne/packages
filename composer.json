@@ -29,9 +29,6 @@
 	},
 	"bin": ["bin/package-manager", "bin/package-manager.php"],
 	"extra": {
-		"branch-alias": {
-			"dev-master": "2.2-dev"
-		},
 		"venne": {
 			"configuration": {
 				"extensions": {
