@@ -90,13 +90,16 @@ class PackageManager extends Object
 	private $packagesDir;
 
 	/** @var array */
+	private $metadataSources = array();
+
+	/** @var array */
 	private $_packageConfig;
 
 	/** @var IPackage[] */
 	private $_packages;
 
 	/** @var array */
-	private $globalPackages;
+	private $_globalMetadata;
 
 	/** @var array */
 	private $_lockFileData;
@@ -109,8 +112,9 @@ class PackageManager extends Object
 	 * @param $resourcesDir
 	 * @param $packagesDir
 	 * @param array $packageFiles
+	 * @param array $metadataSources
 	 */
-	public function __construct(Container $context, $configDir, $libsDir, $resourcesDir, $packagesDir, array $packageFiles)
+	public function __construct(Container $context, $configDir, $libsDir, $resourcesDir, $packagesDir, array $packageFiles, array $metadataSources = array())
 	{
 		$this->context = $context;
 		$this->configDir = $configDir;
@@ -118,24 +122,7 @@ class PackageManager extends Object
 		$this->resourcesDir = $resourcesDir;
 		$this->packagesDir = $packagesDir;
 		$this->packageFiles = $packageFiles;
-	}
-
-
-	/**
-	 * @param array $globalPackages
-	 */
-	public function setGlobalPackages(array $globalPackages)
-	{
-		$this->globalPackages = $globalPackages;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getGlobalPackages()
-	{
-		return $this->globalPackages;
+		$this->metadataSources = $metadataSources;
 	}
 
 
@@ -571,27 +558,42 @@ class PackageManager extends Object
 	/**
 	 * @param IPackage $package
 	 * @return array
+	 * @throws InvalidStateException
 	 */
 	private function getGlobalMetadata(IPackage $package)
 	{
-		if ($this->globalPackages === NULL) {
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-			curl_setopt($ch, CURLOPT_URL, 'https://raw.github.com/venne/packages-metadata/master/metadata.json');
-			$data = curl_exec($ch);
-			if ($data) {
-				$this->globalPackages = Json::decode($data, Json::FORCE_ARRAY);
+		if ($this->_globalMetadata === NULL) {
+			$this->_globalMetadata = array();
+
+			foreach ($this->metadataSources as $source) {
+				if (substr($source, 0, 7) == 'http://' || substr($source, 0, 8) == 'https://') {
+					$ch = curl_init();
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+					curl_setopt($ch, CURLOPT_URL, $source);
+					$data = curl_exec($ch);
+				} else {
+					$data = file_get_contents($source);
+				}
+
+				if (!$data) {
+					throw new InvalidStateException("Source '$source' is empty.");
+				}
+
+				if ($data) {
+					$this->_globalMetadata = Arrays::mergeTree($this->_globalMetadata, Json::decode($data, Json::FORCE_ARRAY));
+				}
 			}
+
 		}
 
-		if (!isset($this->globalPackages[$package->getName()])) {
+		if (!isset($this->_globalMetadata[$package->getName()])) {
 			return NULL;
 		}
 
 		$version = $this->getVersion($package);
-		foreach ($this->globalPackages[$package->getName()] as $data) {
+		foreach ($this->_globalMetadata[$package->getName()] as $data) {
 			if (in_array($version, $data['versions'])) {
 				return $data['metadata'];
 			}

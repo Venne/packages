@@ -12,6 +12,7 @@
 namespace Venne\Packages\DI;
 
 use Nette\DI\CompilerExtension;
+use Nette\Utils\Neon;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
@@ -47,6 +48,15 @@ class PackagesExtension extends CompilerExtension
 			}
 		}
 
+		if (!file_exists($container->parameters['packagesDir'] . '/config.neon')) {
+			file_put_contents($container->parameters['packagesDir'] . '/config.neon', Neon::encode(array(
+				'sources' => array('https://raw.github.com/venne/packages-metadata/master/metadata.json'),
+			), Neon::BLOCK));
+		}
+
+		$packagesConfig = Neon::decode(file_get_contents($container->parameters['packagesDir'] . '/config.neon'));
+		$container->addDependency($container->parameters['packagesDir'] . '/config.neon');
+
 		// load packages
 		$container->parameters['packages'] = array();
 		$packagesDir = $container->expand($config['paths']['packagesDir']);
@@ -60,7 +70,7 @@ class PackagesExtension extends CompilerExtension
 
 		// packages
 		$container->addDefinition($this->prefix('packageManager'))
-			->setClass('Venne\Packages\PackageManager', array('@container', $container->parameters['configDir'], $container->parameters['libsDir'], $container->parameters['resourcesDir'], $container->parameters['packagesDir'], $container->expand($config['packageManager']['packageFiles'])));
+			->setClass('Venne\Packages\PackageManager', array('@container', $container->parameters['configDir'], $container->parameters['libsDir'], $container->parameters['resourcesDir'], $container->parameters['packagesDir'], $container->expand($config['packageManager']['packageFiles']), $packagesConfig['sources']));
 
 		// helpers
 		$container->addDefinition($this->prefix('pathResolver'))
