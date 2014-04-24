@@ -11,12 +11,13 @@
 	],
 	"require": {
 		"php": ">=5.4.0",
-		"nette/nette": "~2.1.0",
-		"kdyby/console": "~2.0.1"
+		"nette/nette": "~2.2.0@dev",
+		"kdyby/console": "@dev"
 	},
 	"require-dev": {
 		"nette/tester": "~1.0.0"
 	},
+	"minimum-stability": "dev",
 	"autoload": {
 		"psr-4": {
 			"Venne\\Packages\\": "src/Packages/"

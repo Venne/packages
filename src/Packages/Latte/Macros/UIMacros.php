@@ -11,11 +11,12 @@
 
 namespace Venne\Packages\Latte\Macros;
 
-use Nette\Latte\Compiler;
-use Nette\Latte\MacroNode;
-use Nette\Latte\Macros\MacroSet;
-use Nette\Latte\MacroTokens;
-use Nette\Latte\PhpWriter;
+use Latte\Compiler;
+use Latte\MacroNode;
+use Latte\Macros\BlockMacros;
+use Latte\Macros\MacroSet;
+use Latte\MacroTokens;
+use Latte\PhpWriter;
 use Venne\Packages\PathResolver;
 
 /**
@@ -27,8 +28,8 @@ class UIMacros extends MacroSet
 	/** @var PathResolver */
 	private $pathResolver;
 
-	/** @var \Nette\Latte\Macros\UIMacros */
-	private $netteUIMacros;
+	/** @var \Latte\Macros\UIMacros */
+	private $blockMacros;
 
 
 	/**
@@ -37,7 +38,7 @@ class UIMacros extends MacroSet
 	public function injectPathResolver(PathResolver $pathResolver)
 	{
 		$this->pathResolver = $pathResolver;
-		$this->netteUIMacros = new \Nette\Latte\Macros\UIMacros($this->compiler);
+		$this->blockMacros = new BlockMacros($this->getCompiler());
 	}
 
 
@@ -67,7 +68,7 @@ class UIMacros extends MacroSet
 		$node->args = $this->pathResolver->expandPath($node->args, 'Resources/templates');
 		$node->tokenizer = new MacroTokens($node->args);
 		$writer = new PhpWriter($node->tokenizer);
-		return $this->netteUIMacros->macroExtends($node, $writer);
+		return $this->blockMacros->macroExtends($node, $writer);
 	}
 
 
@@ -81,7 +82,7 @@ class UIMacros extends MacroSet
 		$node->args = $this->pathResolver->expandPath($node->args, 'Resources/templates');
 		$node->tokenizer = new MacroTokens($node->args);
 		$writer = new PhpWriter($node->tokenizer);
-		return $this->netteUIMacros->macroIncludeBlock($node, $writer);
+		return $this->blockMacros->macroIncludeBlock($node, $writer);
 	}
 
 

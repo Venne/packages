@@ -11,10 +11,10 @@
 
 namespace VenneTests\Packages\Latte\UIMacros;
 
-use Nette\Latte\Compiler;
-use Nette\Latte\MacroNode;
-use Nette\Latte\MacroTokens;
-use Nette\Latte\PhpWriter;
+use Latte\Compiler;
+use Latte\MacroNode;
+use Latte\MacroTokens;
+use Latte\PhpWriter;
 use Tester\Assert;
 use Venne\Packages\Latte\Macros\UIMacros;
 use Venne\Packages\PathResolver;
@@ -34,7 +34,7 @@ class UIMacrosTest extends \Tester\TestCase
 	public function setUp()
 	{
 		$compiler = new Compiler;
-		$pathResolver = new PathResolver(	array(
+		$pathResolver = new PathResolver(array(
 			'foo' => array('path' => '/foopath'),
 		));
 

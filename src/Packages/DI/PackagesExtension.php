@@ -91,7 +91,7 @@ class PackagesExtension extends CompilerExtension
 
 		// macros
 		$container->getDefinition('nette.latte')
-			->addSetup('$s = Venne\Packages\Latte\Macros\UIMacros::install(?->compiler); $s->injectPathResolver(?)', array('@self', '@Venne\Packages\PathResolver'));
+			->addSetup('$s = Venne\Packages\Latte\Macros\UIMacros::install(?->getCompiler()); $s->injectPathResolver(?)', array('@self', '@Venne\Packages\PathResolver'));
 	}
 
 }
