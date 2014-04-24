@@ -22,6 +22,8 @@ use Nette\Utils\Json;
 use Venne\Packages\DependencyResolver\Job;
 use Venne\Packages\DependencyResolver\Problem;
 use Venne\Packages\DependencyResolver\Solver;
+use Venne\Packages\LinkConstraint\VersionConstraint;
+use Venne\Packages\Version\VersionParser;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
@@ -104,6 +106,9 @@ class PackageManager extends Object
 	/** @var array */
 	private $_lockFileData;
 
+	/** @var VersionParser */
+	private $versionParser;
+
 
 	/**
 	 * @param Container $context
@@ -123,6 +128,7 @@ class PackageManager extends Object
 		$this->packagesDir = $packagesDir;
 		$this->packageFiles = $packageFiles;
 		$this->metadataSources = $metadataSources;
+		$this->versionParser = new VersionParser;
 	}
 
 
@@ -592,9 +598,10 @@ class PackageManager extends Object
 			return NULL;
 		}
 
-		$version = $this->getVersion($package);
+		$versionProvide = new VersionConstraint('==', $this->getVersion($package));
 		foreach ($this->_globalMetadata[$package->getName()] as $data) {
-			if (in_array($version, $data['versions'])) {
+			$versionRequire = $this->versionParser->parseConstraints($data['version']);
+			if ($versionRequire->matches($versionProvide)) {
 				return $data['metadata'];
 			}
 		}
@@ -611,6 +618,7 @@ class PackageManager extends Object
 			$data = Json::decode(file_get_contents(dirname($this->libsDir) . '/composer.lock'), Json::FORCE_ARRAY);
 
 			foreach ($data['packages'] as $package) {
+				$package['version'] = $this->versionParser->normalize($package['version']);
 				$this->_lockFileData[$package['name']] = $package;
 			}
 		}

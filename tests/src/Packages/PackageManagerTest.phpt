@@ -14,7 +14,6 @@ namespace VenneTests\Packages;
 use Nette\DI\Container;
 use Tester\Assert;
 use Tester\TestCase;
-use Venne\Packages\Caching\CacheManager;
 use Venne\Packages\PackageManager;
 
 require __DIR__ . '/../bootstrap.php';
