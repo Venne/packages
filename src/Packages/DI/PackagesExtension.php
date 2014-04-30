@@ -11,6 +11,7 @@
 
 namespace Venne\Packages\DI;
 
+use Kdyby\Console\DI\ConsoleExtension;
 use Nette\DI\CompilerExtension;
 use Nette\Utils\Neon;
 
@@ -86,7 +87,7 @@ class PackagesExtension extends CompilerExtension
 		foreach ($commands as $name => $cmd) {
 			$container->addDefinition($this->prefix(lcfirst($name) . 'Command'))
 				->setClass("{$cmd}Command")
-				->addTag('kdyby.console.command');
+				->addTag(ConsoleExtension::COMMAND_TAG);
 		}
 
 		// macros
