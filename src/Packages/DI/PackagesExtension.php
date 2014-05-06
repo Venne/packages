@@ -13,7 +13,7 @@ namespace Venne\Packages\DI;
 
 use Kdyby\Console\DI\ConsoleExtension;
 use Nette\DI\CompilerExtension;
-use Nette\Utils\Neon;
+use Nette\Neon\Neon;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
@@ -91,7 +91,7 @@ class PackagesExtension extends CompilerExtension
 		}
 
 		// macros
-		$container->getDefinition('nette.latte')
+		$container->getDefinition('nette.latteFactory')
 			->addSetup('$s = Venne\Packages\Latte\Macros\UIMacros::install(?->getCompiler()); $s->injectPathResolver(?)', array('@self', '@Venne\Packages\PathResolver'));
 	}
 
