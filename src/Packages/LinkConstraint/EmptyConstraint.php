@@ -20,12 +20,18 @@ namespace Venne\Packages\LinkConstraint;
 class EmptyConstraint implements ILinkConstraint
 {
 
+	/**
+	 * @param \Venne\Packages\LinkConstraint\ILinkConstraint $provider
+	 * @return bool
+	 */
 	public function matches(ILinkConstraint $provider)
 	{
-		return TRUE;
+		return true;
 	}
 
-
+	/**
+	 * @return string
+	 */
 	public function __toString()
 	{
 		return '[]';

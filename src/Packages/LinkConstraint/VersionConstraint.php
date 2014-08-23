@@ -20,10 +20,11 @@ namespace Venne\Packages\LinkConstraint;
 class VersionConstraint implements ILinkConstraint
 {
 
+	/** @var string */
 	private $operator;
 
+	/** @var string */
 	private $version;
-
 
 	/**
 	 * Sets operator and version to compare a package with
@@ -45,7 +46,10 @@ class VersionConstraint implements ILinkConstraint
 		$this->version = $version;
 	}
 
-
+	/**
+	 * @param \Venne\Packages\LinkConstraint\ILinkConstraint $provider
+	 * @return bool
+	 */
 	public function matches(ILinkConstraint $provider)
 	{
 		if ($provider instanceof MultiConstraint) {
@@ -57,7 +61,13 @@ class VersionConstraint implements ILinkConstraint
 		return true;
 	}
 
-
+	/**
+	 * @param string $a
+	 * @param string $b
+	 * @param string $operator
+	 * @param bool $compareBranches
+	 * @return bool|mixed
+	 */
 	public function versionCompare($a, $b, $operator, $compareBranches = false)
 	{
 		$aIsBranch = 'dev-' === substr($a, 0, 4);
@@ -74,10 +84,9 @@ class VersionConstraint implements ILinkConstraint
 		return version_compare($a, $b, $operator);
 	}
 
-
 	/**
-	 * @param  VersionConstraint $provider
-	 * @param  bool $compareBranches
+	 * @param \Venne\Packages\LinkConstraint\VersionConstraint $provider
+	 * @param bool $compareBranches
 	 * @return bool
 	 */
 	public function matchSpecific(VersionConstraint $provider, $compareBranches = false)
@@ -91,10 +100,9 @@ class VersionConstraint implements ILinkConstraint
 			$this->doMatchSpecific($provider, $compareBranches);
 	}
 
-
 	/**
-	 * @param  VersionConstraint $provider
-	 * @param  bool $compareBranches
+	 * @param \Venne\Packages\LinkConstraint\VersionConstraint $provider
+	 * @param bool $compareBranches
 	 * @return bool
 	 */
 	private function doMatchSpecific(VersionConstraint $provider, $compareBranches = false)
@@ -133,7 +141,9 @@ class VersionConstraint implements ILinkConstraint
 		return false;
 	}
 
-
+	/**
+	 * @return string
+	 */
 	public function __toString()
 	{
 		return $this->operator . ' ' . $this->version;

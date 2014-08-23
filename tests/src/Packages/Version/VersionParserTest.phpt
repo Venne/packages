@@ -26,6 +26,9 @@ require __DIR__ . '/../../bootstrap.php';
 class VersionParserTest extends TestCase
 {
 
+	/**
+	 * @return mixed
+	 */
 	public function formattedVersions()
 	{
 		$data = array(
@@ -65,7 +68,6 @@ class VersionParserTest extends TestCase
 		return array_map($createPackage, $data);
 	}
 
-
 	/**
 	 * @dataProvider successfulNormalizedVersions
 	 */
@@ -75,7 +77,9 @@ class VersionParserTest extends TestCase
 		Assert::same($expected, $parser->normalize($input));
 	}
 
-
+	/**
+	 * @return mixed
+	 */
 	public function successfulNormalizedVersions()
 	{
 		return array(
@@ -110,7 +114,6 @@ class VersionParserTest extends TestCase
 		);
 	}
 
-
 	/**
 	 * @dataProvider failingNormalizedVersions
 	 */
@@ -122,7 +125,9 @@ class VersionParserTest extends TestCase
 		}, 'UnexpectedValueException');
 	}
 
-
+	/**
+	 * @return mixed
+	 */
 	public function failingNormalizedVersions()
 	{
 		return array(
@@ -134,17 +139,18 @@ class VersionParserTest extends TestCase
 		);
 	}
 
-
 	/**
 	 * @dataProvider successfulNormalizedBranches
 	 */
 	public function testNormalizeBranch($input, $expected)
 	{
 		$parser = new VersionParser;
-		Assert::same((string)$expected, (string)$parser->normalizeBranch($input));
+		Assert::same((string) $expected, (string) $parser->normalizeBranch($input));
 	}
 
-
+	/**
+	 * @return mixed
+	 */
 	public function successfulNormalizedBranches()
 	{
 		return array(
@@ -163,34 +169,30 @@ class VersionParserTest extends TestCase
 		);
 	}
 
-
 	public function testParseConstraintsIgnoresStabilityFlag()
 	{
 		$parser = new VersionParser;
-		Assert::same((string)new VersionConstraint('=', '1.0.0.0'), (string)$parser->parseConstraints('1.0@dev'));
+		Assert::same((string) new VersionConstraint('=', '1.0.0.0'), (string) $parser->parseConstraints('1.0@dev'));
 	}
-
 
 	public function testParseConstraintsIgnoresReferenceOnDevVersion()
 	{
 		$parser = new VersionParser;
-		Assert::same((string)new VersionConstraint('=', '1.0.9999999.9999999-dev'), (string)$parser->parseConstraints('1.0.x-dev#abcd123'));
-		Assert::same((string)new VersionConstraint('=', '1.0.9999999.9999999-dev'), (string)$parser->parseConstraints('1.0.x-dev#trunk/@123'));
+		Assert::same((string) new VersionConstraint('=', '1.0.9999999.9999999-dev'), (string) $parser->parseConstraints('1.0.x-dev#abcd123'));
+		Assert::same((string) new VersionConstraint('=', '1.0.9999999.9999999-dev'), (string) $parser->parseConstraints('1.0.x-dev#trunk/@123'));
 	}
-
 
 	public function testParseConstraintsFailsOnBadReference()
 	{
 		Assert::exception(function () {
 			$parser = new VersionParser;
-			Assert::same((string)new VersionConstraint('=', '1.0.0.0'), (string)$parser->parseConstraints('1.0#abcd123'));
+			Assert::same((string) new VersionConstraint('=', '1.0.0.0'), (string) $parser->parseConstraints('1.0#abcd123'));
 		}, 'UnexpectedValueException');
 		Assert::exception(function () {
 			$parser = new VersionParser;
-			Assert::same((string)new VersionConstraint('=', '1.0.0.0'), (string)$parser->parseConstraints('1.0#trunk/@123'));
+			Assert::same((string) new VersionConstraint('=', '1.0.0.0'), (string) $parser->parseConstraints('1.0#trunk/@123'));
 		}, 'UnexpectedValueException');
 	}
-
 
 	/**
 	 * @dataProvider simpleConstraints
@@ -198,10 +200,12 @@ class VersionParserTest extends TestCase
 	public function testParseConstraintsSimple($input, $expected)
 	{
 		$parser = new VersionParser;
-		Assert::same((string)$expected, (string)$parser->parseConstraints($input));
+		Assert::same((string) $expected, (string) $parser->parseConstraints($input));
 	}
 
-
+	/**
+	 * @return mixed
+	 */
 	public function simpleConstraints()
 	{
 		return array(
@@ -231,7 +235,6 @@ class VersionParserTest extends TestCase
 		);
 	}
 
-
 	/**
 	 * @dataProvider wildcardConstraints
 	 */
@@ -244,10 +247,12 @@ class VersionParserTest extends TestCase
 			$expected = $max;
 		}
 
-		Assert::same((string)$expected, (string)$parser->parseConstraints($input));
+		Assert::same((string) $expected, (string) $parser->parseConstraints($input));
 	}
 
-
+	/**
+	 * @return mixed
+	 */
 	public function wildcardConstraints()
 	{
 		return array(
@@ -261,7 +266,6 @@ class VersionParserTest extends TestCase
 		);
 	}
 
-
 	/**
 	 * @dataProvider tildeConstraints
 	 */
@@ -274,10 +278,12 @@ class VersionParserTest extends TestCase
 			$expected = $max;
 		}
 
-		Assert::same((string)$expected, (string)$parser->parseConstraints($input));
+		Assert::same((string) $expected, (string) $parser->parseConstraints($input));
 	}
 
-
+	/**
+	 * @return mixed
+	 */
 	public function tildeConstraints()
 	{
 		return array(
@@ -295,16 +301,14 @@ class VersionParserTest extends TestCase
 		);
 	}
 
-
 	public function testParseConstraintsMulti()
 	{
 		$parser = new VersionParser;
 		$first = new VersionConstraint('>', '2.0.0.0');
 		$second = new VersionConstraint('<=', '3.0.0.0');
 		$multi = new MultiConstraint(array($first, $second));
-		Assert::same((string)$multi, (string)$parser->parseConstraints('>2.0,<=3.0'));
+		Assert::same((string) $multi, (string) $parser->parseConstraints('>2.0,<=3.0'));
 	}
-
 
 	public function testParseConstraintsMultiDisjunctiveHasPrioOverConjuctive()
 	{
@@ -314,9 +318,8 @@ class VersionParserTest extends TestCase
 		$third = new VersionConstraint('>', '2.0.6.0');
 		$multi1 = new MultiConstraint(array($first, $second));
 		$multi2 = new MultiConstraint(array($multi1, $third), false);
-		Assert::same((string)$multi2, (string)$parser->parseConstraints('>2.0,<2.0.5 | >2.0.6'));
+		Assert::same((string) $multi2, (string) $parser->parseConstraints('>2.0,<2.0.5 | >2.0.6'));
 	}
-
 
 	public function testParseConstraintsMultiWithStabilities()
 	{
@@ -324,9 +327,8 @@ class VersionParserTest extends TestCase
 		$first = new VersionConstraint('>', '2.0.0.0');
 		$second = new VersionConstraint('<=', '3.0.0.0-dev');
 		$multi = new MultiConstraint(array($first, $second));
-		Assert::same((string)$multi, (string)$parser->parseConstraints('>2.0@stable,<=3.0@dev'));
+		Assert::same((string) $multi, (string) $parser->parseConstraints('>2.0@stable,<=3.0@dev'));
 	}
-
 
 	/**
 	 * @dataProvider failingConstraints
@@ -339,7 +341,9 @@ class VersionParserTest extends TestCase
 		}, 'UnexpectedValueException');
 	}
 
-
+	/**
+	 * @return mixed
+	 */
 	public function failingConstraints()
 	{
 		return array(
@@ -347,7 +351,6 @@ class VersionParserTest extends TestCase
 			'invalid version' => array('1.0.0-meh'),
 		);
 	}
-
 
 	/**
 	 * @dataProvider stabilityProvider
@@ -357,7 +360,9 @@ class VersionParserTest extends TestCase
 		Assert::same($expected, VersionParser::parseStability($version));
 	}
 
-
+	/**
+	 * @return mixed
+	 */
 	public function stabilityProvider()
 	{
 		return array(

@@ -51,32 +51,31 @@ class PackageManager extends Object
 
 	const ACTION_UNREGISTER = 'unregister';
 
-
-	/** @var array */
+	/** @var callable[] */
 	public $onInstall;
 
-	/** @var array */
+	/** @var callable[] */
 	public $onUninstall;
 
-	/** @var array */
+	/** @var callable[] */
 	public $onUpgrade;
 
-	/** @var array */
+	/** @var callable[] */
 	public $onRegister;
 
-	/** @var array */
+	/** @var callable[] */
 	public $onUnregister;
 
-	/** @var array */
+	/** @var string[] */
 	private static $statuses = array(
 		self::STATUS_INSTALLED => 'Installed',
 		self::STATUS_UNINSTALLED => 'Uninstalled',
 	);
 
-	/** @var array */
+	/** @var string[] */
 	private $packageFiles = array();
 
-	/** @var Container|\SystemContainer */
+	/** @var \Nette\DI\Container|\SystemContainer */
 	private $context;
 
 	/** @var string */
@@ -91,13 +90,13 @@ class PackageManager extends Object
 	/** @var string */
 	private $packagesDir;
 
-	/** @var array */
+	/** @var string[] */
 	private $metadataSources = array();
 
-	/** @var array */
+	/** @var mixed[] */
 	private $_packageConfig;
 
-	/** @var IPackage[] */
+	/** @var \Venne\Packages\IPackage[] */
 	private $_packages;
 
 	/** @var array */
@@ -106,18 +105,17 @@ class PackageManager extends Object
 	/** @var array */
 	private $_lockFileData;
 
-	/** @var VersionParser */
+	/** @var \Venne\Packages\Version\VersionParser */
 	private $versionParser;
 
-
 	/**
-	 * @param Container $context
-	 * @param $configDir
-	 * @param $libsDir
-	 * @param $resourcesDir
-	 * @param $packagesDir
-	 * @param array $packageFiles
-	 * @param array $metadataSources
+	 * @param \Nette\DI\Container $context
+	 * @param string $configDir
+	 * @param string $libsDir
+	 * @param string $resourcesDir
+	 * @param string $packagesDir
+	 * @param string[] $packageFiles
+	 * @param string[] $metadataSources
 	 */
 	public function __construct(Container $context, $configDir, $libsDir, $resourcesDir, $packagesDir, array $packageFiles, array $metadataSources = array())
 	{
@@ -131,7 +129,6 @@ class PackageManager extends Object
 		$this->versionParser = new VersionParser;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -139,7 +136,6 @@ class PackageManager extends Object
 	{
 		return $this->libsDir;
 	}
-
 
 	/**
 	 * @return string
@@ -149,7 +145,6 @@ class PackageManager extends Object
 		return $this->configDir;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -158,22 +153,19 @@ class PackageManager extends Object
 		return $this->resourcesDir;
 	}
 
-
 	/**
 	 * Reload info.
 	 */
 	private function reloadInfo()
 	{
-		$this->_packages = NULL;
+		$this->_packages = null;
 	}
-
 
 	/**
 	 * Create instance of package.
 	 *
-	 * @param $name
-	 * @return IPackage
-	 * @throws \Nette\InvalidArgumentException
+	 * @param string $name
+	 * @return \Venne\Packages\IPackage
 	 */
 	public function createInstance($name)
 	{
@@ -186,46 +178,48 @@ class PackageManager extends Object
 			$data = $packageConfig[$name][self::PACKAGE_METADATA];
 			$data['name'] = $name;
 		} else {
-			throw new InvalidArgumentException("Package '{$name}' does not exist.");
+			throw new InvalidArgumentException(sprintf('Package \'%s\' does not exist.', $name));
 		}
 
 		$path = $this->libsDir . '/' . $name;
 		foreach ($this->packageFiles as $packageFile) {
-			if (file_exists($path . '/' . $packageFile)) {
+			if (is_file($path . '/' . $packageFile)) {
 				$class = $this->getPackageClassByFile($path . '/' . $packageFile);
 				include_once $path . '/' . $packageFile;
+
 				return new $class;
 			}
 		}
 
 		$package = new VirtualPackage($data, $path);
-		if (($metadata = $this->getGlobalMetadata($package)) !== NULL) {
-			$data = Arrays::mergeTree($data, array('extra' => array('venne' => $metadata)));
+		if (($metadata = $this->getGlobalMetadata($package)) !== null) {
+			$data = Arrays::mergeTree($data, array(
+				'extra' => array(
+					'venne' => $metadata
+				)
+			));
 			$package = new VirtualPackage($data, $path);
 		}
 
 		return $package;
 	}
 
-
 	/**
 	 * Get package status
 	 *
-	 * @param IPackage $package
+	 * @param \Venne\Packages\IPackage $package
 	 * @return string
-	 * @throws \Nette\InvalidArgumentException
 	 */
 	public function getStatus(IPackage $package)
 	{
 		$packageConfig = $this->getPackageConfig();
+
 		return $packageConfig[$package->getName()][self::PACKAGE_STATUS];
 	}
 
-
 	/**
-	 * @param IPackage $package
+	 * @param \Venne\Packages\IPackage $package
 	 * @return string
-	 * @throws \Nette\InvalidArgumentException
 	 */
 	public function getVersion(IPackage $package)
 	{
@@ -234,7 +228,7 @@ class PackageManager extends Object
 
 		if (!isset($data[$package->getName()])) {
 			if (!isset($packageConfig[$package->getName()])) {
-				throw new InvalidArgumentException("Package '{$package->getName()}' does not exist.");
+				throw new InvalidArgumentException(sprintf('Package \'%s\' does not exist.', $package->getName()));
 			}
 
 			return $packageConfig[$package->getName()][self::PACKAGE_VERSION];
@@ -243,9 +237,8 @@ class PackageManager extends Object
 		return $data[$package->getName()]['version'];
 	}
 
-
 	/**
-	 * @return array
+	 * @return string[]
 	 */
 	public function registerAvailable()
 	{
@@ -261,15 +254,14 @@ class PackageManager extends Object
 		return $actions;
 	}
 
-
 	/**
-	 * @return array
+	 * @return string[]
 	 */
 	public function installAvailable()
 	{
 		$actions = array();
 
-		while (TRUE) {
+		while (true) {
 			$packages = $this->getPackagesByStatus(self::STATUS_UNINSTALLED);
 			if (!count($packages)) {
 				break;
@@ -294,9 +286,8 @@ class PackageManager extends Object
 		return $actions;
 	}
 
-
 	/**
-	 * @return array
+	 * @return string[]
 	 */
 	public function uninstallAbsent()
 	{
@@ -317,17 +308,15 @@ class PackageManager extends Object
 		return $actions;
 	}
 
-
 	/**
 	 * Installation of package.
 	 *
-	 * @param IPackage $package
-	 * @throws InvalidArgumentException|InvalidStateException
+	 * @param \Venne\Packages\IPackage $package
 	 */
 	public function install(IPackage $package)
 	{
 		if ($this->getStatus($package) === self::STATUS_INSTALLED) {
-			throw new InvalidArgumentException("Package '{$package->getName()}' is already installed");
+			throw new InvalidArgumentException(sprintf('Package \'%s\' is already installed', $package->getName()));
 		}
 
 		$dependencyResolver = $this->createSolver();
@@ -356,17 +345,15 @@ class PackageManager extends Object
 		$this->onInstall($this, $package);
 	}
 
-
 	/**
 	 * Uninstallation of package.
 	 *
-	 * @param IPackage $package
-	 * @throws InvalidArgumentException|InvalidStateException
+	 * @param \Venne\Packages\IPackage $package
 	 */
 	public function uninstall(IPackage $package)
 	{
 		if ($this->getStatus($package) === self::STATUS_UNINSTALLED) {
-			throw new InvalidArgumentException("Package '{$package->getName()}' is already uninstalled");
+			throw new InvalidArgumentException(sprintf('Package \'%s\' is already uninstalled', $package->getName()));
 		}
 
 		$dependencyResolver = $this->createSolver();
@@ -395,41 +382,40 @@ class PackageManager extends Object
 		$this->onUninstall($this, $package);
 	}
 
-
 	/**
-	 * @param IPackage $package
-	 * @return Problem
+	 * @param \Venne\Packages\IPackage $package
+	 * @return \Venne\Packages\DependencyResolver\Problem
 	 */
 	public function testInstall(IPackage $package)
 	{
 		$problem = new Problem;
 		$dependencyResolver = $this->createSolver();
 		$dependencyResolver->testInstall($package, $problem);
+
 		return $problem;
 	}
 
-
 	/**
-	 * @param IPackage $package
-	 * @return Problem
+	 * @param \Venne\Packages\IPackage $package
+	 * @return \Venne\Packages\DependencyResolver\Problem
 	 */
 	public function testUninstall(IPackage $package)
 	{
 		$problem = new Problem;
 		$dependencyResolver = $this->createSolver();
 		$dependencyResolver->testUninstall($package, $problem);
+
 		return $problem;
 	}
-
 
 	/**
 	 * Get activated packages.
 	 *
-	 * @return IPackage[]
+	 * @return \Venne\Packages\IPackage[]
 	 */
 	public function getPackages()
 	{
-		if ($this->_packages === NULL) {
+		if ($this->_packages === null) {
 			$this->_packages = array();
 			foreach ($this->getPackageConfig() as $name => $values) {
 				$this->_packages[$name] = $this->createInstance($name);
@@ -439,7 +425,6 @@ class PackageManager extends Object
 		return $this->_packages;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -448,16 +433,15 @@ class PackageManager extends Object
 		return $this->packagesDir . '/packages.php';
 	}
 
-
 	/**
-	 * @return array
+	 * @return mixed
 	 */
 	private function & getPackageConfig()
 	{
-		if ($this->_packageConfig === NULL) {
+		if ($this->_packageConfig === null) {
 			$config = new PhpAdapter;
 
-			if (!file_exists($this->getPackageConfigPath())) {
+			if (!is_file($this->getPackageConfigPath())) {
 				@mkdir(dirname($this->getPackageConfigPath()));
 				file_put_contents($this->getPackageConfigPath(), $config->dump(array()));
 			}
@@ -468,70 +452,62 @@ class PackageManager extends Object
 		return $this->_packageConfig;
 	}
 
-
 	private function savePackageConfig()
 	{
 		$config = new PhpAdapter;
 		file_put_contents($this->getPackageConfigPath(), $config->dump($this->_packageConfig));
 	}
 
-
 	/**
-	 * @param $file
+	 * @param string $file
 	 * @return string
-	 * @throws InvalidArgumentException
 	 */
 	private function getPackageClassByFile($file)
 	{
 		$classes = Helpers::getClassesFromFile($file);
 
 		if (count($classes) !== 1) {
-			throw new InvalidArgumentException("File '{$file}' must contain only one class.");
+			throw new InvalidArgumentException(sprintf('File \'%s\' must contain only one class.', $file));
 		}
 
 		return $classes[0];
 	}
 
-
 	/**
 	 * Set package status
 	 *
-	 * @param IPackage $package
-	 * @param $status
-	 * @throws InvalidArgumentException
+	 * @param \Venne\Packages\IPackage $package
+	 * @param string $status
 	 */
 	private function setStatus(IPackage $package, $status)
 	{
 		if (!isset(self::$statuses[$status])) {
-			throw new InvalidArgumentException("Status '{$status}' not exists.");
+			throw new InvalidArgumentException(sprintf('Status \'%s\' not exists.', $status));
 		}
 
-		$packageConfig = & $this->getPackageConfig();
+		$packageConfig = &$this->getPackageConfig();
 		$packageConfig[$package->getName()][self::PACKAGE_STATUS] = $status;
 		$this->savePackageConfig();
 	}
 
-
 	/**
-	 * @return Solver
+	 * @return \Venne\Packages\DependencyResolver\Solver
 	 */
 	private function createSolver()
 	{
 		return new Solver($this->getPackages(), $this->getPackagesByStatus(self::STATUS_INSTALLED), $this->getPackageConfig(), $this->libsDir);
 	}
 
-
 	/**
 	 * Get packages by status.
 	 *
-	 * @param $status
-	 * @return IPackage[]
-	 * @throws InvalidArgumentException
+	 * @param string $status
+	 * @return \Venne\Packages\IPackage[]
 	 */
 	private function getPackagesByStatus($status)
 	{
 		if (!isset(self::$statuses[$status])) {
-			throw new InvalidArgumentException("Status '{$status}' not exists.");
+			throw new InvalidArgumentException(sprintf('Status \'%s\' not exists.', $status));
 		}
 
 		$ret = array();
@@ -540,12 +516,12 @@ class PackageManager extends Object
 				$ret[$name] = $package;
 			}
 		}
+
 		return $ret;
 	}
 
-
 	/**
-	 * @param $path
+	 * @param string $path
 	 * @return string
 	 */
 	private function getFormattedPath($path)
@@ -560,15 +536,13 @@ class PackageManager extends Object
 		return str_replace(array_keys($tr), array_merge($tr), $path);
 	}
 
-
 	/**
-	 * @param IPackage $package
-	 * @return array
-	 * @throws InvalidStateException
+	 * @param \Venne\Packages\IPackage $package
+	 * @return mixed
 	 */
 	private function getGlobalMetadata(IPackage $package)
 	{
-		if ($this->_globalMetadata === NULL) {
+		if ($this->_globalMetadata === null) {
 			$this->_globalMetadata = array();
 
 			foreach ($this->metadataSources as $source) {
@@ -584,7 +558,7 @@ class PackageManager extends Object
 				}
 
 				if (!$data) {
-					throw new InvalidStateException("Source '$source' is empty.");
+					throw new InvalidStateException(sprintf('Source \'$source\' is empty.', $source));
 				}
 
 				if ($data) {
@@ -595,7 +569,7 @@ class PackageManager extends Object
 		}
 
 		if (!isset($this->_globalMetadata[$package->getName()])) {
-			return NULL;
+			return null;
 		}
 
 		$versionProvide = new VersionConstraint('==', $this->getVersion($package));
@@ -607,13 +581,12 @@ class PackageManager extends Object
 		}
 	}
 
-
 	/**
-	 * @return array
+	 * @return mixed
 	 */
 	private function getLockFileData()
 	{
-		if ($this->_lockFileData === NULL) {
+		if ($this->_lockFileData === null) {
 			$this->_lockFileData = array();
 			$data = Json::decode(file_get_contents(dirname($this->libsDir) . '/composer.lock'), Json::FORCE_ARRAY);
 
@@ -626,15 +599,14 @@ class PackageManager extends Object
 		return $this->_lockFileData;
 	}
 
-
 	/**
 	 * Registration of package.
 	 *
-	 * @param IPackage $package
+	 * @param \Venne\Packages\IPackage $package
 	 */
 	private function register(IPackage $package)
 	{
-		$packageConfig = & $this->getPackageConfig();
+		$packageConfig = &$this->getPackageConfig();
 		if (!array_search($package->getName(), $packageConfig)) {
 			$packageConfig[$package->getName()] = array(
 				self::PACKAGE_STATUS => self::STATUS_UNINSTALLED,
@@ -660,15 +632,14 @@ class PackageManager extends Object
 		$this->onRegister($this, $package);
 	}
 
-
 	/**
 	 * Unregistration of package.
 	 *
-	 * @param IPackage $package
+	 * @param \Venne\Packages\IPackage $package
 	 */
 	private function unregister(IPackage $package)
 	{
-		$packageConfig = & $this->getPackageConfig();
+		$packageConfig = &$this->getPackageConfig();
 		unset($packageConfig[$package->getName()]);
 		$this->savePackageConfig();
 		$this->onUnregister($this, $package);

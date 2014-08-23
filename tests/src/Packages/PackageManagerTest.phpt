@@ -24,9 +24,8 @@ require __DIR__ . '/../bootstrap.php';
 class PackageManagerTest extends TestCase
 {
 
-	/** @var PackageManager */
+	/** @var \Venne\Packages\PackageManager */
 	protected $packageManager;
-
 
 	protected function setUp()
 	{
@@ -42,9 +41,8 @@ class PackageManagerTest extends TestCase
 		);
 	}
 
-
 	/**
-	 * @return array
+	 * @return mixed
 	 */
 	public static function dataGetFormattedPath()
 	{
@@ -53,7 +51,6 @@ class PackageManagerTest extends TestCase
 			array('%libsDir%/foo', __DIR__ . '/vendor\foo'),
 		);
 	}
-
 
 	/**
 	 * @dataProvider dataGetFormattedPath

@@ -25,15 +25,14 @@ use Venne\Packages\PathResolver;
 class UIMacros extends MacroSet
 {
 
-	/** @var PathResolver */
+	/** @var \Venne\Packages\PathResolver */
 	private $pathResolver;
 
-	/** @var \Latte\Macros\UIMacros */
+	/** @var \Latte\Macros\BlockMacros */
 	private $blockMacros;
 
-
 	/**
-	 * @param PathResolver $pathResolver
+	 * @param \Venne\Packages\PathResolver $pathResolver
 	 */
 	public function injectPathResolver(PathResolver $pathResolver)
 	{
@@ -41,10 +40,9 @@ class UIMacros extends MacroSet
 		$this->blockMacros = new BlockMacros($this->getCompiler());
 	}
 
-
 	/**
-	 * @param Compiler $compiler
-	 * @return static
+	 * @param \Latte\Compiler $compiler
+	 * @return \Venne\Packages\Latte\Macros\UIMacros
 	 */
 	public static function install(Compiler $compiler)
 	{
@@ -58,23 +56,22 @@ class UIMacros extends MacroSet
 		return $me;
 	}
 
-
 	/**
-	 * @param MacroNode $node
-	 * @param PhpWriter $writer
+	 * @param \Latte\MacroNode $node
+	 * @param \Latte\PhpWriter $writer
 	 */
 	public function macroExtends(MacroNode $node, PhpWriter $writer)
 	{
 		$node->args = $this->pathResolver->expandPath($node->args, 'Resources/templates');
 		$node->tokenizer = new MacroTokens($node->args);
 		$writer = new PhpWriter($node->tokenizer);
+
 		return $this->blockMacros->macroExtends($node, $writer);
 	}
 
-
 	/**
-	 * @param MacroNode $node
-	 * @param PhpWriter $writer
+	 * @param \Latte\MacroNode $node
+	 * @param \Latte\PhpWriter $writer
 	 * @return string
 	 */
 	public function macroIncludeBlock(MacroNode $node, PhpWriter $writer)
@@ -82,13 +79,13 @@ class UIMacros extends MacroSet
 		$node->args = $this->pathResolver->expandPath($node->args, 'Resources/templates');
 		$node->tokenizer = new MacroTokens($node->args);
 		$writer = new PhpWriter($node->tokenizer);
+
 		return $this->blockMacros->macroIncludeBlock($node, $writer);
 	}
 
-
 	/**
-	 * @param MacroNode $node
-	 * @param PhpWriter $writer
+	 * @param \Latte\MacroNode $node
+	 * @param \Latte\PhpWriter $writer
 	 * @return string
 	 */
 	public function macroPath(MacroNode $node, PhpWriter $writer)

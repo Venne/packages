@@ -21,18 +21,14 @@ use Venne\Packages\DependencyResolver\Job;
 use Venne\Packages\PackageManager;
 
 /**
- * Command to execute DQL queries in a given EntityManager.
+ * @author Josef Kříž <pepakriz@gmail.com>
  */
 class UninstallCommand extends Command
 {
 
-	/** @var PackageManager */
+	/** @var \Venne\Packages\PackageManager */
 	protected $packageManager;
 
-
-	/**
-	 * @param \Venne\Packages\PackageManager $packageManager
-	 */
 	public function __construct(PackageManager $packageManager)
 	{
 		parent::__construct();
@@ -40,23 +36,15 @@ class UninstallCommand extends Command
 		$this->packageManager = $packageManager;
 	}
 
-
-	/**
-	 * @see Console\Command\Command
-	 */
 	protected function configure()
 	{
 		$this
 			->setName('uninstall')
 			->addArgument('package', InputArgument::REQUIRED, 'Package name')
-			->addOption('noconfirm', NULL, InputOption::VALUE_NONE, 'do not ask for any confirmation')
+			->addOption('noconfirm', null, InputOption::VALUE_NONE, 'do not ask for any confirmation')
 			->setDescription('Uninstall package.');
 	}
 
-
-	/**
-	 * @see Console\Command\Command
-	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		// register available
@@ -69,10 +57,10 @@ class UninstallCommand extends Command
 		$package = $this->packageManager->createInstance($input->getArgument('package'));
 
 		try {
-			/** @var $problem Problem */
 			$problem = $this->packageManager->testUninstall($package);
 		} catch (InvalidArgumentException $e) {
 			$output->writeln("<error>{$e->getMessage()}</error>");
+
 			return;
 		}
 
@@ -83,7 +71,7 @@ class UninstallCommand extends Command
 			$output->writeln("<info>uninstall : {$package->getName()}</info>");
 
 			$dialog = $this->getHelperSet()->get('dialog');
-			if (!$dialog->askConfirmation($output, '<question>Continue with this actions? [y/N]</question> ', FALSE)) {
+			if (!$dialog->askConfirmation($output, '<question>Continue with this actions? [y/N]</question> ', false)) {
 				return;
 			}
 		}
@@ -106,4 +94,5 @@ class UninstallCommand extends Command
 			$output->writeln("<error>{$e->getMessage()}</error>");
 		}
 	}
+
 }

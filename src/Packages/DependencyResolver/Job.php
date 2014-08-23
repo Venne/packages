@@ -28,20 +28,18 @@ class Job extends Object
 	/** @var string */
 	private $action;
 
-	/** @var IPackage */
+	/** @var \Venne\Packages\IPackage */
 	private $package;
 
 	/** @var array */
 	private static $actions = array(
-		self::ACTION_INSTALL => TRUE,
-		self::ACTION_UNINSTALL => TRUE,
+		self::ACTION_INSTALL => true,
+		self::ACTION_UNINSTALL => true,
 	);
 
-
 	/**
-	 * @param $action
-	 * @param IPackage $package
-	 * @throws InvalidArgumentException
+	 * @param string $action
+	 * @param \Venne\Packages\IPackage $package
 	 */
 	public function __construct($action, IPackage $package)
 	{
@@ -53,7 +51,6 @@ class Job extends Object
 		$this->package = $package;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -61,7 +58,6 @@ class Job extends Object
 	{
 		return $this->action;
 	}
-
 
 	/**
 	 * @return IPackage

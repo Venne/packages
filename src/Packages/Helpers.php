@@ -22,15 +22,14 @@ class Helpers
 	/**
 	 * Get relative path.
 	 *
-	 * @static
-	 * @param $from
-	 * @param $to
-	 * @param $directorySeparator
+	 * @param string $from
+	 * @param string $to
+	 * @param string|null $directorySeparator
 	 * @return string
 	 */
-	public static function getRelativePath($from, $to, $directorySeparator = NULL)
+	public static function getRelativePath($from, $to, $directorySeparator = null)
 	{
-		$directorySeparator = $directorySeparator ? : ((substr(PHP_OS, 0, 3) === 'WIN') ? '\\' : '/');
+		$directorySeparator = $directorySeparator ?: ((substr(PHP_OS, 0, 3) === 'WIN') ? '\\' : '/');
 
 		if ($directorySeparator !== '/') {
 			$from = str_replace($directorySeparator, '/', $from);
@@ -67,36 +66,33 @@ class Helpers
 		return $relPath;
 	}
 
-
-
 	/**
-	 * @param $file
-	 * @return array
-	 * @throws InvalidArgumentException
+	 * @param string $file
+	 * @return string[]
 	 */
 	public static function getClassesFromFile($file)
 	{
-		if (!file_exists($file)) {
-			throw new InvalidArgumentException("File '{$file}' does not exist.");
+		if (!is_file($file)) {
+			throw new InvalidArgumentException(sprintf('File \'%s\' does not exist.', $file));
 		}
 
 		$classes = array();
 
-		$namespace = NULL;
+		$namespace = null;
 		$tokens = token_get_all(file_get_contents($file));
 		$count = count($tokens);
-		$dlm = FALSE;
+		$dlm = false;
 		for ($i = 2; $i < $count; $i++) {
-			if ((isset($tokens[$i - 2][1]) && ($tokens[$i - 2][1] == "phpnamespace" || $tokens[$i - 2][1] == "namespace")) ||
+			if ((isset($tokens[$i - 2][1]) && ($tokens[$i - 2][1] == 'phpnamespace' || $tokens[$i - 2][1] == 'namespace')) ||
 				($dlm && $tokens[$i - 1][0] == T_NS_SEPARATOR && $tokens[$i][0] == T_STRING)
 			) {
-				if (!$dlm) $namespace = NULL;
+				if (!$dlm) $namespace = null;
 				if (isset($tokens[$i][1])) {
-					$namespace = $namespace ? $namespace . "\\" . $tokens[$i][1] : $tokens[$i][1];
-					$dlm = TRUE;
+					$namespace = $namespace ? $namespace . '\\' . $tokens[$i][1] : $tokens[$i][1];
+					$dlm = true;
 				}
 			} elseif ($dlm && ($tokens[$i][0] != T_NS_SEPARATOR) && ($tokens[$i][0] != T_STRING)) {
-				$dlm = FALSE;
+				$dlm = false;
 			}
 			if (($tokens[$i - 2][0] == T_CLASS || (isset($tokens[$i - 2][1]) && $tokens[$i - 2][1] == "phpclass"))
 				&& $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING
@@ -105,6 +101,7 @@ class Helpers
 				$classes[] = ($namespace ? $namespace . '\\' : '') . $class_name;
 			}
 		}
+
 		return $classes;
 	}
 

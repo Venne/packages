@@ -20,9 +20,8 @@ use Nette\Utils\Json;
 abstract class Package extends Object implements IPackage
 {
 
-	/** @var array */
+	/** @var mixed */
 	protected $composerData;
-
 
 	/**
 	 * @return string
@@ -34,20 +33,18 @@ abstract class Package extends Object implements IPackage
 		return $this->composerData['name'];
 	}
 
-
 	/**
-	 * @return mixed
+	 * @return string|null
 	 */
 	public function getDescription()
 	{
 		$this->loadComposerData();
 
-		return isset($this->composerData['description']) ? $this->composerData['description'] : NULL;
+		return isset($this->composerData['description']) ? $this->composerData['description'] : null;
 	}
 
-
 	/**
-	 * @return array
+	 * @return string[]
 	 */
 	public function getKeywords()
 	{
@@ -55,35 +52,33 @@ abstract class Package extends Object implements IPackage
 
 		if (isset($this->composerData['keywords'])) {
 			$keywords = $this->composerData['keywords'];
+
 			return is_array($keywords) ? $keywords : array_map('trim', explode(',', $keywords));
 		}
 	}
 
-
 	/**
-	 * @return array
+	 * @return string[]
 	 */
 	public function getLicense()
 	{
 		$this->loadComposerData();
 
-		return isset($this->composerData['license']) ? $this->composerData['license'] : NULL;
+		return isset($this->composerData['license']) ? $this->composerData['license'] : null;
 	}
 
-
 	/**
-	 * @return array
+	 * @return string[][]
 	 */
 	public function getAuthors()
 	{
 		$this->loadComposerData();
 
-		return isset($this->composerData['authors']) ? $this->composerData['authors'] : NULL;
+		return isset($this->composerData['authors']) ? $this->composerData['authors'] : null;
 	}
 
-
 	/**
-	 * @return array
+	 * @return string[]
 	 */
 	public function getRequire()
 	{
@@ -92,7 +87,7 @@ abstract class Package extends Object implements IPackage
 		$ret = array();
 		if (isset($this->composerData['require'])) {
 			foreach ($this->composerData['require'] as $name => $require) {
-				if (strpos($name, '/') !== FALSE) {
+				if (strpos($name, '/') !== false) {
 					$ret[] = $name;
 				}
 			}
@@ -100,7 +95,6 @@ abstract class Package extends Object implements IPackage
 
 		return $ret;
 	}
-
 
 	/**
 	 * @return string
@@ -113,12 +107,11 @@ abstract class Package extends Object implements IPackage
 			return $this->composerData['extra']['venne']['relativePublicPath'];
 		}
 
-		return file_exists($this->getPath() . '/Resources/public') ? '/Resources/public' : NULL;
+		return is_dir($this->getPath() . '/Resources/public') ? '/Resources/public' : null;
 	}
 
-
 	/**
-	 * @return array
+	 * @return mixed
 	 */
 	public function getConfiguration()
 	{
@@ -131,9 +124,8 @@ abstract class Package extends Object implements IPackage
 		return array();
 	}
 
-
 	/**
-	 * @return array
+	 * @return string[]
 	 */
 	public function getInstallers()
 	{
@@ -148,7 +140,6 @@ abstract class Package extends Object implements IPackage
 		return $installers;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -157,10 +148,9 @@ abstract class Package extends Object implements IPackage
 		return dirname($this->getReflection()->getFileName());
 	}
 
-
 	private function loadComposerData()
 	{
-		if ($this->composerData === NULL) {
+		if ($this->composerData === null) {
 			$this->composerData = Json::decode(file_get_contents(dirname($this->getReflection()->getFileName()) . '/composer.json'), Json::FORCE_ARRAY);
 		}
 	}

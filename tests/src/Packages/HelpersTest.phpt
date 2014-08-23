@@ -23,9 +23,8 @@ require __DIR__ . '/../bootstrap.php';
 class HelpersTest extends TestCase
 {
 
-
 	/**
-	 * @return array
+	 * @return mixed
 	 */
 	public static function dataGetRelativePath()
 	{
@@ -36,7 +35,6 @@ class HelpersTest extends TestCase
 		);
 	}
 
-
 	/**
 	 * @dataProvider dataGetRelativePath
 	 *
@@ -45,9 +43,8 @@ class HelpersTest extends TestCase
 	 */
 	public function testGetRelativePath($expect, $path)
 	{
-		Assert::equal($expect, Helpers::getRelativePath($path[0], $path[1], (isset($path[2]) ? $path[2] : NULL)));
+		Assert::equal($expect, Helpers::getRelativePath($path[0], $path[1], (isset($path[2]) ? $path[2] : null)));
 	}
-
 
 	public function testGetClassesFromFile()
 	{

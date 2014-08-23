@@ -12,7 +12,6 @@
 namespace Venne\Packages\Version;
 
 use Venne\Packages\LinkConstraint\EmptyConstraint;
-use Venne\Packages\LinkConstraint\ILinkConstraint;
 use Venne\Packages\LinkConstraint\MultiConstraint;
 use Venne\Packages\LinkConstraint\VersionConstraint;
 
@@ -23,20 +22,26 @@ use Venne\Packages\LinkConstraint\VersionConstraint;
 class VersionParser
 {
 
-	const STABILITY_STABLE  = 0;
-	const STABILITY_RC      = 5;
-	const STABILITY_BETA    = 10;
-	const STABILITY_ALPHA   = 15;
-	const STABILITY_DEV     = 20;
+	const STABILITY_STABLE = 0;
 
+	const STABILITY_RC = 5;
+
+	const STABILITY_BETA = 10;
+
+	const STABILITY_ALPHA = 15;
+
+	const STABILITY_DEV = 20;
+
+	/** @var int[] */
 	private static $stabilities = array(
 		'stable' => self::STABILITY_STABLE,
-		'RC'     => self::STABILITY_RC,
-		'beta'   => self::STABILITY_BETA,
-		'alpha'  => self::STABILITY_ALPHA,
-		'dev'    => self::STABILITY_DEV,
+		'RC' => self::STABILITY_RC,
+		'beta' => self::STABILITY_BETA,
+		'alpha' => self::STABILITY_ALPHA,
+		'dev' => self::STABILITY_DEV,
 	);
 
+	/** @var string */
 	private static $modifierRegex = '[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)(?:[.-]?(\d+))?)?([.-]?dev)?';
 
 	/**
@@ -53,7 +58,7 @@ class VersionParser
 			return 'dev';
 		}
 
-		preg_match('{'.self::$modifierRegex.'$}i', strtolower($version), $match);
+		preg_match('{' . self::$modifierRegex . '$}i', strtolower($version), $match);
 		if (!empty($match[3])) {
 			return 'dev';
 		}
@@ -73,6 +78,10 @@ class VersionParser
 		return 'stable';
 	}
 
+	/**
+	 * @param string $stability
+	 * @return string
+	 */
 	public static function normalizeStability($stability)
 	{
 		$stability = strtolower($stability);
@@ -80,14 +89,12 @@ class VersionParser
 		return $stability === 'rc' ? 'RC' : $stability;
 	}
 
-
 	/**
 	 * Normalizes a version string to be able to perform comparisons on it
 	 *
-	 * @param  string                    $version
-	 * @param  string                    $fullVersion optional complete version string to give more context
-	 * @throws \UnexpectedValueException
-	 * @return array
+	 * @param string $version
+	 * @param string $fullVersion optional complete version string to give more context
+	 * @return string
 	 */
 	public function normalize($version, $fullVersion = null)
 	{
@@ -107,17 +114,17 @@ class VersionParser
 		}
 
 		if ('dev-' === strtolower(substr($version, 0, 4))) {
-			return 'dev-'.substr($version, 4);
+			return 'dev-' . substr($version, 4);
 		}
 
 		// match classical versioning
-		if (preg_match('{^v?(\d{1,3})(\.\d+)?(\.\d+)?(\.\d+)?'.self::$modifierRegex.'$}i', $version, $matches)) {
+		if (preg_match('{^v?(\d{1,3})(\.\d+)?(\.\d+)?(\.\d+)?' . self::$modifierRegex . '$}i', $version, $matches)) {
 			$version = $matches[1]
-				.(!empty($matches[2]) ? $matches[2] : '.0')
-				.(!empty($matches[3]) ? $matches[3] : '.0')
-				.(!empty($matches[4]) ? $matches[4] : '.0');
+				. (!empty($matches[2]) ? $matches[2] : '.0')
+				. (!empty($matches[3]) ? $matches[3] : '.0')
+				. (!empty($matches[4]) ? $matches[4] : '.0');
 			$index = 5;
-		} elseif (preg_match('{^v?(\d{4}(?:[.:-]?\d{2}){1,6}(?:[.:-]?\d{1,3})?)'.self::$modifierRegex.'$}i', $version, $matches)) { // match date-based versioning
+		} elseif (preg_match('{^v?(\d{4}(?:[.:-]?\d{2}){1,6}(?:[.:-]?\d{1,3})?)' . self::$modifierRegex . '$}i', $version, $matches)) { // match date-based versioning
 			$version = preg_replace('{\D}', '-', $matches[1]);
 			$index = 2;
 		}
@@ -128,10 +135,10 @@ class VersionParser
 				if ('stable' === $matches[$index]) {
 					return $version;
 				}
-				$version .= '-' . $this->expandStability($matches[$index]) . (!empty($matches[$index+1]) ? $matches[$index+1] : '');
+				$version .= '-' . $this->expandStability($matches[$index]) . (!empty($matches[$index + 1]) ? $matches[$index + 1] : '');
 			}
 
-			if (!empty($matches[$index+2])) {
+			if (!empty($matches[$index + 2])) {
 				$version .= '-dev';
 			}
 
@@ -142,24 +149,25 @@ class VersionParser
 		if (preg_match('{(.*?)[.-]?dev$}i', $version, $match)) {
 			try {
 				return $this->normalizeBranch($match[1]);
-			} catch (\Exception $e) {}
+			} catch (\Exception $e) {
+			}
 		}
 
 		$extraMessage = '';
-		if (preg_match('{ +as +'.preg_quote($version).'$}', $fullVersion)) {
-			$extraMessage = ' in "'.$fullVersion.'", the alias must be an exact version';
-		} elseif (preg_match('{^'.preg_quote($version).' +as +}', $fullVersion)) {
-			$extraMessage = ' in "'.$fullVersion.'", the alias source must be an exact version, if it is a branch name you should prefix it with dev-';
+		if (preg_match('{ +as +' . preg_quote($version) . '$}', $fullVersion)) {
+			$extraMessage = ' in "' . $fullVersion . '", the alias must be an exact version';
+		} elseif (preg_match('{^' . preg_quote($version) . ' +as +}', $fullVersion)) {
+			$extraMessage = ' in "' . $fullVersion . '", the alias source must be an exact version, if it is a branch name you should prefix it with dev-';
 		}
 
-		throw new \UnexpectedValueException('Invalid version string "'.$version.'"'.$extraMessage);
+		throw new \UnexpectedValueException('Invalid version string "' . $version . '"' . $extraMessage);
 	}
 
 	/**
 	 * Normalizes a branch name to be able to perform comparisons on it
 	 *
-	 * @param  string $name
-	 * @return array
+	 * @param string $name
+	 * @return string
 	 */
 	public function normalizeBranch($name)
 	{
@@ -175,21 +183,21 @@ class VersionParser
 				$version .= isset($matches[$i]) ? str_replace('*', 'x', $matches[$i]) : '.x';
 			}
 
-			return str_replace('x', '9999999', $version).'-dev';
+			return str_replace('x', '9999999', $version) . '-dev';
 		}
 
-		return 'dev-'.$name;
+		return 'dev-' . $name;
 	}
 
 	/**
 	 * Parses as constraint string into LinkConstraint objects
 	 *
-	 * @param  string                                                   $constraints
-	 * @return ILinkConstraint
+	 * @param $constraints
+	 * @return \Venne\Packages\LinkConstraint\MultiConstraint
 	 */
 	public function parseConstraints($constraints)
 	{
-		if (preg_match('{^([^,\s]*?)@('.implode('|', array_keys(self::$stabilities)).')$}i', $constraints, $match)) {
+		if (preg_match('{^([^,\s]*?)@(' . implode('|', array_keys(self::$stabilities)) . ')$}i', $constraints, $match)) {
 			$constraints = empty($match[1]) ? '*' : $match[1];
 		}
 
@@ -229,9 +237,12 @@ class VersionParser
 		return $constraint;
 	}
 
+	/**
+	 * @param string $constraint
+	 */
 	private function parseConstraint($constraint)
 	{
-		if (preg_match('{^([^,\s]+?)@('.implode('|', array_keys(self::$stabilities)).')$}i', $constraint, $match)) {
+		if (preg_match('{^([^,\s]+?)@(' . implode('|', array_keys(self::$stabilities)) . ')$}i', $constraint, $match)) {
 			$constraint = $match[1];
 			if ($match[2] !== 'stable') {
 				$stabilityModifier = $match[2];
@@ -247,10 +258,10 @@ class VersionParser
 		// version, to ensure that unstable instances of the current version are allowed.
 		// however, if a stability suffix is added to the constraint, then a >= match on the current version is
 		// used instead
-		if (preg_match('{^~>?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?'.self::$modifierRegex.'?$}i', $constraint, $matches)) {
+		if (preg_match('{^~>?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?' . self::$modifierRegex . '?$}i', $constraint, $matches)) {
 			if (substr($constraint, 0, 2) === '~>') {
 				throw new \UnexpectedValueException(
-					'Could not parse version constraint '.$constraint.': '.
+					'Could not parse version constraint ' . $constraint . ': ' .
 					'Invalid operator "~>", you probably meant to use the "~" operator'
 				);
 			}
@@ -331,12 +342,13 @@ class VersionParser
 				}
 
 				return array(new VersionConstraint($matches[1] ?: '=', $version));
-			} catch (\Exception $e) { }
+			} catch (\Exception $e) {
+			}
 		}
 
-		$message = 'Could not parse version constraint '.$constraint;
+		$message = 'Could not parse version constraint ' . $constraint;
 		if (isset($e)) {
-			$message .= ': '. $e->getMessage();
+			$message .= ': ' . $e->getMessage();
 		}
 
 		throw new \UnexpectedValueException($message);
@@ -347,10 +359,10 @@ class VersionParser
 	 *
 	 * Support function for {@link parseConstraint()}
 	 *
-	 * @param  array  $matches   Array with version parts in array indexes 1,2,3,4
-	 * @param  int    $position  1,2,3,4 - which segment of the version to decrement
-	 * @param  int    $increment
-	 * @param  string $pad       The string to pad version parts after $position
+	 * @param string[] $matches Array with version parts in array indexes 1,2,3,4
+	 * @param int $position 1,2,3,4 - which segment of the version to decrement
+	 * @param int $increment
+	 * @param string $pad The string to pad version parts after $position
 	 * @return string The new version
 	 */
 	private function manipulateVersionString($matches, $position, $increment = 0, $pad = '0')
@@ -376,6 +388,10 @@ class VersionParser
 		return $matches[1] . '.' . $matches[2] . '.' . $matches[3] . '.' . $matches[4];
 	}
 
+	/**
+	 * @param string $stability
+	 * @return string
+	 */
 	private function expandStability($stability)
 	{
 		$stability = strtolower($stability);
@@ -398,8 +414,8 @@ class VersionParser
 	/**
 	 * Parses a name/version pairs and returns an array of pairs + the
 	 *
-	 * @param  array   $pairs a set of package/version pairs separated by ":", "=" or " "
-	 * @return array[] array of arrays containing a name and (if provided) a version
+	 * @param string[] $pairs a set of package/version pairs separated by ":", "=" or " "
+	 * @return mixed[][] array of arrays containing a name and (if provided) a version
 	 */
 	public function parseNameVersionPairs(array $pairs)
 	{
@@ -408,8 +424,8 @@ class VersionParser
 
 		for ($i = 0, $count = count($pairs); $i < $count; $i++) {
 			$pair = preg_replace('{^([^=: ]+)[=: ](.*)$}', '$1 $2', trim($pairs[$i]));
-			if (false === strpos($pair, ' ') && isset($pairs[$i+1]) && false === strpos($pairs[$i+1], '/')) {
-				$pair .= ' '.$pairs[$i+1];
+			if (false === strpos($pair, ' ') && isset($pairs[$i + 1]) && false === strpos($pairs[$i + 1], '/')) {
+				$pair .= ' ' . $pairs[$i + 1];
 				$i++;
 			}
 

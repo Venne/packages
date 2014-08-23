@@ -20,9 +20,15 @@ namespace Venne\Packages\LinkConstraint;
 interface ILinkConstraint
 {
 
+	/**
+	 * @param \Venne\Packages\LinkConstraint\ILinkConstraint $provider
+	 * @return bool
+	 */
 	public function matches(ILinkConstraint $provider);
 
-
+	/**
+	 * @return string
+	 */
 	public function __toString();
 
 }

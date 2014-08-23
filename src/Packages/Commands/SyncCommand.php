@@ -19,18 +19,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Venne\Packages\PackageManager;
 
 /**
- * Command to execute DQL queries in a given EntityManager.
+ * @author Josef Kříž <pepakriz@gmail.com>
  */
 class SyncCommand extends Command
 {
 
-	/** @var PackageManager */
+	/** @var \Venne\Packages\PackageManager */
 	protected $packageManager;
 
-
-	/**
-	 * @param \Venne\Packages\PackageManager $packageManager
-	 */
 	public function __construct(PackageManager $packageManager)
 	{
 		parent::__construct();
@@ -38,22 +34,14 @@ class SyncCommand extends Command
 		$this->packageManager = $packageManager;
 	}
 
-
-	/**
-	 * @see Console\Command\Command
-	 */
 	protected function configure()
 	{
 		$this
 			->setName('sync')
-			->addOption('composer', NULL, InputOption::VALUE_NONE, 'run as composer script')
+			->addOption('composer', null, InputOption::VALUE_NONE, 'run as composer script')
 			->setDescription('Synchronize packages.');
 	}
 
-
-	/**
-	 * @see Console\Command\Command
-	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		if ($input->getOption('composer')) {
@@ -86,4 +74,5 @@ class SyncCommand extends Command
 			$output->writeln("<error>{$e->getMessage()}</error>");
 		}
 	}
+
 }

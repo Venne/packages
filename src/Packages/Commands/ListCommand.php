@@ -18,18 +18,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Venne\Packages\PackageManager;
 
 /**
- * Command to execute DQL queries in a given EntityManager.
+ * @author Josef Kříž <pepakriz@gmail.com>
  */
 class ListCommand extends Command
 {
 
-	/** @var PackageManager */
+	/** @var \Venne\Packages\PackageManager */
 	protected $packageManager;
 
-
-	/**
-	 * @param PackageManager $packageManager
-	 */
 	public function __construct(PackageManager $packageManager)
 	{
 		parent::__construct();
@@ -37,10 +33,6 @@ class ListCommand extends Command
 		$this->packageManager = $packageManager;
 	}
 
-
-	/**
-	 * @see Console\Command\Command
-	 */
 	protected function configure()
 	{
 		$this
@@ -48,10 +40,6 @@ class ListCommand extends Command
 			->setDescription('List packages.');
 	}
 
-
-	/**
-	 * @see Console\Command\Command
-	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		// register available
@@ -69,4 +57,5 @@ class ListCommand extends Command
 			$output->writeln("<error>{$e->getMessage()}</error>");
 		}
 	}
+
 }

@@ -20,13 +20,11 @@ use Nette\Object;
 class Problem extends Object
 {
 
-	/** @var Job[] */
+	/** @var \Venne\Packages\DependencyResolver\Job[] */
 	private $solutions = array();
 
-
 	/**
-	 * @param Job $job
-	 * @throws \Nette\InvalidArgumentException
+	 * @param \Venne\Packages\DependencyResolver\Job $job
 	 */
 	public function addSolution(Job $job)
 	{
@@ -37,9 +35,8 @@ class Problem extends Object
 		$this->solutions[$job->getPackage()->getName()] = $job;
 	}
 
-
 	/**
-	 * @param Job $job
+	 * @param \Venne\Packages\DependencyResolver\Job $job
 	 * @return bool
 	 */
 	public function hasSolution(Job $job)
@@ -47,9 +44,8 @@ class Problem extends Object
 		return isset($this->solutions[$job->getPackage()->getName()]);
 	}
 
-
 	/**
-	 * @return Job[]
+	 * @return \Venne\Packages\DependencyResolver\Job[]
 	 */
 	public function getSolutions()
 	{

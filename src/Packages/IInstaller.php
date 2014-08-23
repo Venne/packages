@@ -18,13 +18,12 @@ interface IInstaller
 {
 
 	/**
-	 * @param IPackage $package
+	 * @param \Venne\Packages\IPackage $package
 	 */
 	public function install(IPackage $package);
 
-
 	/**
-	 * @param IPackage $package
+	 * @param \Venne\Packages\IPackage $package
 	 */
 	public function uninstall(IPackage $package);
 

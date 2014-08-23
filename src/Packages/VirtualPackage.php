@@ -14,15 +14,14 @@ namespace Venne\Packages;
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
  */
-class VirtualPackage extends Package
+class VirtualPackage extends \Venne\Packages\Package
 {
 
 	/** @var string */
 	private $path;
 
-
 	/**
-	 * @param array $composerData
+	 * @param mixed[] $composerData
 	 * @param $path
 	 */
 	public function __construct(array $composerData, $path)
@@ -30,7 +29,6 @@ class VirtualPackage extends Package
 		$this->composerData = $composerData;
 		$this->path = $path;
 	}
-
 
 	/**
 	 * @return string

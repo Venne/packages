@@ -21,7 +21,7 @@ use Nette\Neon\Neon;
 class PackagesExtension extends CompilerExtension
 {
 
-	/** @var array */
+	/** @var mixed[] */
 	public $defaults = array(
 		'paths' => array(
 			'configDir' => '%appDir%/config',
@@ -37,7 +37,6 @@ class PackagesExtension extends CompilerExtension
 		),
 	);
 
-
 	public function loadConfiguration()
 	{
 		$container = $this->getContainerBuilder();
@@ -49,7 +48,7 @@ class PackagesExtension extends CompilerExtension
 			}
 		}
 
-		if (!file_exists($container->parameters['packagesDir'] . '/config.neon')) {
+		if (!is_file($container->parameters['packagesDir'] . '/config.neon')) {
 			file_put_contents($container->parameters['packagesDir'] . '/config.neon', Neon::encode(array(
 				'sources' => array('https://raw.github.com/venne/packages-metadata/master/metadata.json'),
 			), Neon::BLOCK));
@@ -61,7 +60,7 @@ class PackagesExtension extends CompilerExtension
 		// load packages
 		$container->parameters['packages'] = array();
 		$packagesDir = $container->expand($config['paths']['packagesDir']);
-		if (file_exists($packagesDir . '/packages.php')) {
+		if (is_file($packagesDir . '/packages.php')) {
 			$packages = require $packagesDir . '/packages.php';
 			foreach ($packages as $name => $items) {
 				$container->parameters['packages'][$name] = $items;

@@ -27,9 +27,8 @@ require __DIR__ . '/../../../bootstrap.php';
 class UIMacrosTest extends \Tester\TestCase
 {
 
-	/** @var UIMacros */
+	/** @var \Venne\Packages\Latte\Macros\UIMacros */
 	private $macros;
-
 
 	public function setUp()
 	{
@@ -42,9 +41,8 @@ class UIMacrosTest extends \Tester\TestCase
 		$this->macros->injectPathResolver($pathResolver);
 	}
 
-
 	/**
-	 * @return array
+	 * @return string[][]
 	 */
 	public function dataServiceNamesAndPresenters()
 	{
@@ -54,19 +52,17 @@ class UIMacrosTest extends \Tester\TestCase
 		);
 	}
 
-
 	/**
 	 * @dataProvider dataServiceNamesAndPresenters
 	 *
-	 * @param string $presenterName
-	 * @param string $serviceName
+	 * @param string $path
+	 * @param string $expect
 	 */
 	public function testBlockPath($path, $expect)
 	{
 		Assert::same($expect, $this->getMacroExtends($path)->args);
 		Assert::same($expect, $this->getMacroIncludeBlock($path)->args);
 	}
-
 
 	public function testBlockPathException()
 	{
@@ -79,10 +75,9 @@ class UIMacrosTest extends \Tester\TestCase
 		}, 'Nette\InvalidArgumentException');
 	}
 
-
 	/**
-	 * @param $path
-	 * @return MacroNode
+	 * @param string $path
+	 * @return \Latte\MacroNode
 	 */
 	public function getMacroExtends($path)
 	{
@@ -93,10 +88,9 @@ class UIMacrosTest extends \Tester\TestCase
 		return $macroNode;
 	}
 
-
 	/**
-	 * @param $path
-	 * @return MacroNode
+	 * @param string $path
+	 * @return \Latte\MacroNode
 	 */
 	public function getMacroIncludeBlock($path)
 	{

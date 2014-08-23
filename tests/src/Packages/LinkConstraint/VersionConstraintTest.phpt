@@ -23,6 +23,9 @@ require __DIR__ . '/../../bootstrap.php';
 class VersionConstraintTest extends TestCase
 {
 
+	/**
+	 * @return string[][]
+	 */
 	public static function successfulVersionMatches()
 	{
 		return array(
@@ -50,7 +53,6 @@ class VersionConstraintTest extends TestCase
 		);
 	}
 
-
 	/**
 	 * @dataProvider successfulVersionMatches
 	 */
@@ -62,7 +64,9 @@ class VersionConstraintTest extends TestCase
 		Assert::true($versionRequire->matches($versionProvide));
 	}
 
-
+	/**
+	 * @return string[][]
+	 */
 	public static function failingVersionMatches()
 	{
 		return array(
@@ -86,7 +90,6 @@ class VersionConstraintTest extends TestCase
 		);
 	}
 
-
 	/**
 	 * @dataProvider failingVersionMatches
 	 */
@@ -97,7 +100,6 @@ class VersionConstraintTest extends TestCase
 
 		Assert::false($versionRequire->matches($versionProvide));
 	}
-
 
 	public function testComparableBranches()
 	{

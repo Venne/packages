@@ -17,33 +17,54 @@ namespace Venne\Packages;
 interface IPackage
 {
 
+	/**
+	 * @return string
+	 */
 	public function getName();
 
-
+	/**
+	 * @return string
+	 */
 	public function getDescription();
 
-
+	/**
+	 * @return string[]
+	 */
 	public function getKeywords();
 
-
+	/**
+	 * @return string[]
+	 */
 	public function getLicense();
 
-
+	/**
+	 * @return string[][]
+	 */
 	public function getAuthors();
 
-
+	/**
+	 * @return string[]
+	 */
 	public function getRequire();
 
-
+	/**
+	 * @return mixed
+	 */
 	public function getConfiguration();
 
-
+	/**
+	 * @return string
+	 */
 	public function getPath();
 
-
+	/**
+	 * @return string
+	 */
 	public function getRelativePublicPath();
 
-
+	/**
+	 * @return string[]
+	 */
 	public function getInstallers();
 
 }

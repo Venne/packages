@@ -23,16 +23,15 @@ require __DIR__ . '/../bootstrap.php';
 class PathResolverTest extends TestCase
 {
 
-	/** @var PathResolver */
+	/** @var \Venne\Packages\PathResolver */
 	protected $pathResolver;
 
-	/** @var array */
+	/** @var mixed */
 	protected $parameters = array(
 		'venne/foo' => array('path' => '/foo'),
 		'venne/bar' => array('path' => '/modules/bar'),
 		'venne/win' => array('path' => 'C:\\win'),
 	);
-
 
 	protected function setUp()
 	{
@@ -41,9 +40,8 @@ class PathResolverTest extends TestCase
 		$this->pathResolver = new PathResolver($this->parameters);
 	}
 
-
 	/**
-	 * @return array
+	 * @return mixed
 	 */
 	public static function dataExpandPath()
 	{
@@ -60,7 +58,6 @@ class PathResolverTest extends TestCase
 		);
 	}
 
-
 	/**
 	 * @dataProvider dataExpandPath
 	 *
@@ -72,7 +69,6 @@ class PathResolverTest extends TestCase
 		Assert::equal($expect, $this->pathResolver->expandPath($path));
 	}
 
-
 	public function testExpandPathException()
 	{
 		$pathResolver = $this->pathResolver;
@@ -81,9 +77,8 @@ class PathResolverTest extends TestCase
 		}, 'Nette\InvalidArgumentException');
 	}
 
-
 	/**
-	 * @return array
+	 * @return mixed
 	 */
 	public static function dataExpandResource()
 	{
@@ -96,7 +91,6 @@ class PathResolverTest extends TestCase
 			array('resources/venne/bar/test', '@venne.bar/test'),
 		);
 	}
-
 
 	/**
 	 * @dataProvider dataExpandResource

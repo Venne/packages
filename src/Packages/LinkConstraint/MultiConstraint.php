@@ -21,10 +21,11 @@ namespace Venne\Packages\LinkConstraint;
 class MultiConstraint implements ILinkConstraint
 {
 
+	/** @var \Venne\Packages\LinkConstraint\ILinkConstraint[] */
 	protected $constraints;
 
+	/** @var bool */
 	protected $conjunctive;
-
 
 	/**
 	 * Sets operator and version to compare a package with
@@ -32,13 +33,16 @@ class MultiConstraint implements ILinkConstraint
 	 * @param array $constraints A set of constraints
 	 * @param bool $conjunctive Whether the constraints should be treated as conjunctive or disjunctive
 	 */
-	public function __construct(array $constraints, $conjunctive = TRUE)
+	public function __construct(array $constraints, $conjunctive = true)
 	{
 		$this->constraints = $constraints;
 		$this->conjunctive = $conjunctive;
 	}
 
-
+	/**
+	 * @param \Venne\Packages\LinkConstraint\ILinkConstraint $provider
+	 * @return bool
+	 */
 	public function matches(ILinkConstraint $provider)
 	{
 		if (false === $this->conjunctive) {
@@ -60,7 +64,9 @@ class MultiConstraint implements ILinkConstraint
 		return true;
 	}
 
-
+	/**
+	 * @return string
+	 */
 	public function __toString()
 	{
 		$constraints = array();

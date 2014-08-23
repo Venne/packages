@@ -22,43 +22,40 @@ use Venne\Packages\PackageManager;
 class Solver extends Object
 {
 
-	/** @var IPackage[] */
+	/** @var \Venne\Packages\IPackage[] */
 	private $installedPackages;
 
-	/** @var IPackage[] */
+	/** @var \Venne\Packages\IPackage[] */
 	private $packages;
 
-	/** @var array */
+	/** @var mixed[] */
 	private $packagesConfig;
 
 	/** @var string */
 	private $libsDir;
 
-
 	/**
-	 * @param $packages
-	 * @param $installedPackages
-	 * @param $packagesConfig
-	 * @param $libsDir
+	 * @param \Venne\Packages\IPackage[] $packages
+	 * @param \Venne\Packages\IPackage[] $installedPackages
+	 * @param mixed[] $packagesConfig
+	 * @param string $libsDir
 	 */
-	public function __construct($packages, $installedPackages, $packagesConfig, $libsDir)
+	public function __construct(array $packages, array $installedPackages, $packagesConfig, $libsDir)
 	{
 		$this->packages = $packages;
 		$this->installedPackages = $installedPackages;
-		$this->packagesConfig = & $packagesConfig;
+		$this->packagesConfig = &$packagesConfig;
 		$this->libsDir = $libsDir;
 	}
 
-
 	/**
-	 * @param IPackage $package
-	 * @param Problem $problem
-	 * @throws InvalidArgumentException
+	 * @param \Venne\Packages\IPackage $package
+	 * @param \Venne\Packages\DependencyResolver\Problem $problem
 	 */
-	public function testInstall(IPackage $package, Problem $problem = NULL)
+	public function testInstall(IPackage $package, Problem $problem = null)
 	{
-		$installedPackages = & $this->installedPackages;
-		$packages = & $this->packages;
+		$installedPackages = &$this->installedPackages;
+		$packages = &$this->packages;
 
 		foreach ($package->getRequire() as $name) {
 			if (!isset($installedPackages[$name])) {
@@ -86,15 +83,13 @@ class Solver extends Object
 		}
 	}
 
-
 	/**
-	 * @param IPackage $package
-	 * @param Problem $problem
-	 * @throws InvalidArgumentException
+	 * @param \Venne\Packages\IPackage $package
+	 * @param \Venne\Packages\DependencyResolver\Problem $problem
 	 */
-	public function testUninstall(IPackage $package, Problem $problem = NULL)
+	public function testUninstall(IPackage $package, Problem $problem = null)
 	{
-		$installedPackages = & $this->installedPackages;
+		$installedPackages = &$this->installedPackages;
 
 		foreach ($installedPackages as $sourcePackage) {
 			if ($sourcePackage->getName() === $package->getName()) {
@@ -119,13 +114,13 @@ class Solver extends Object
 		}
 	}
 
-
 	/**
-	 * @return Solver
+	 * @return \Venne\Packages\DependencyResolver\Solver
 	 */
 	private function createSolver()
 	{
 		return new static($this->packages, $this->installedPackages, $this->packagesConfig, $this->libsDir);
 	}
+
 }
 

@@ -35,7 +35,6 @@ class MultiConstraintTest extends TestCase
 		Assert::true($multiRequire->matches($versionProvide));
 	}
 
-
 	public function testMultiVersionProvidedMatchSucceeds()
 	{
 		$versionRequireStart = new VersionConstraint('>', '1.0');
@@ -48,7 +47,6 @@ class MultiConstraintTest extends TestCase
 
 		Assert::true($multiRequire->matches($multiProvide));
 	}
-
 
 	public function testMultiVersionMatchFails()
 	{

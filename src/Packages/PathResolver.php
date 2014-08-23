@@ -12,6 +12,7 @@
 namespace Venne\Packages;
 
 use Nette\InvalidArgumentException;
+use Nette\Utils\Strings;
 
 /**
  * @author Josef Kříž <pepakriz@gmail.com>
@@ -19,31 +20,27 @@ use Nette\InvalidArgumentException;
 final class PathResolver
 {
 
-	/** @var array */
+	/** @var string[] */
 	private $packages;
 
-
 	/**
-	 * @param $packages
+	 * @param string[] $packages
 	 */
 	public function __construct($packages)
 	{
-		$this->packages = & $packages;
+		$this->packages = &$packages;
 	}
-
 
 	/**
 	 * Expands @foo/path/....
 	 *
-	 * @static
-	 * @param $path
-	 * @param string|NULL $localPrefix
+	 * @param string $path
+	 * @param string|null $localPrefix
 	 * @return string
-	 * @throws InvalidArgumentException
 	 */
 	public function expandPath($path, $localPrefix = '')
 	{
-		$path = \Nette\Utils\Strings::replace($path, '~\\\~', '/');
+		$path = Strings::replace($path, '~\\\~', '/');
 
 		if (substr($path, 0, 1) !== '@') {
 			return $path;
@@ -59,21 +56,19 @@ final class PathResolver
 		$package = str_replace('.', '/', $package);
 
 		if (!isset($this->packages[$package])) {
-			throw new InvalidArgumentException("Package '{$package}' does not exist.");
+			throw new InvalidArgumentException(sprintf('Package \'%s\' does not exist.', $package));
 		}
 
 		$path = $this->packages[$package]['path'] . ($localPrefix ? '/' . $localPrefix : '') . ($pos ? substr($path, $pos) : '');
-		return \Nette\Utils\Strings::replace($path, '~\\\~', '/');
-	}
 
+		return Strings::replace($path, '~\\\~', '/');
+	}
 
 	/**
 	 * Expands @foo/path/....
 	 *
-	 * @static
-	 * @param $path
+	 * @param string $path
 	 * @return string
-	 * @throws InvalidArgumentException
 	 */
 	public function expandResource($path)
 	{
@@ -91,10 +86,11 @@ final class PathResolver
 		$package = str_replace('.', '/', $package);
 
 		if (!isset($this->packages[$package])) {
-			throw new InvalidArgumentException("Package '{$package}' does not exist.");
+			throw new InvalidArgumentException(sprintf('Package \'%s\' does not exist.', $package));
 		}
 
 		return 'resources/' . $package . ($pos ? substr($path, $pos) : '');
 	}
+
 }
 

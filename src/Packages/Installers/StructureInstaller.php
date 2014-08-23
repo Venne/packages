@@ -11,9 +11,9 @@
 
 namespace Venne\Packages\Installers;
 
+use Nette\Neon\Neon;
 use Nette\Object;
 use Nette\Utils\FileSystem;
-use Nette\Utils\Neon;
 use Nette\Utils\Validators;
 use Venne\Packages\Helpers;
 use Venne\Packages\IInstaller;
@@ -26,7 +26,7 @@ use Venne\Packages\PackageManager;
 class StructureInstaller extends Object implements IInstaller
 {
 
-	/** @var array */
+	/** @var string[] */
 	private $actions = array();
 
 	/** @var string */
@@ -35,9 +35,8 @@ class StructureInstaller extends Object implements IInstaller
 	/** @var string */
 	private $configDir;
 
-
 	/**
-	 * @param PackageManager $packageManager
+	 * @param \Venne\Packages\PackageManager $packageManager
 	 */
 	public function __construct(PackageManager $packageManager)
 	{
@@ -45,10 +44,8 @@ class StructureInstaller extends Object implements IInstaller
 		$this->configDir = $packageManager->getConfigDir();
 	}
 
-
 	/**
-	 * @param IPackage $package
-	 * @throws \Exception
+	 * @param \Venne\Packages\IPackage $package
 	 */
 	public function install(IPackage $package)
 	{
@@ -61,10 +58,10 @@ class StructureInstaller extends Object implements IInstaller
 				$resourcesDir = $this->resourcesDir;
 				$packageDir = $resourcesDir . '/' . $name;
 				$targetDir = realpath($package->getPath() . $package->getRelativePublicPath());
-				if (!file_exists($packageDir) && file_exists($targetDir)) {
+				if (!is_dir($packageDir) && is_dir($targetDir)) {
 					umask(0000);
-					@mkdir(dirname($packageDir), 0777, TRUE);
-					if (!@symlink(Helpers::getRelativePath(dirname($packageDir), $targetDir), $packageDir) && !file_exists($packageDir)) {
+					@mkdir(dirname($packageDir), 0777, true);
+					if (!@symlink(Helpers::getRelativePath(dirname($packageDir), $targetDir), $packageDir) && !is_dir($packageDir)) {
 						FileSystem::copy($targetDir, $packageDir);
 					}
 
@@ -103,9 +100,8 @@ class StructureInstaller extends Object implements IInstaller
 		}
 	}
 
-
 	/**
-	 * @param IPackage $package
+	 * @param \Venne\Packages\IPackage $package
 	 */
 	public function uninstall(IPackage $package)
 	{
@@ -136,7 +132,7 @@ class StructureInstaller extends Object implements IInstaller
 
 		// remove resources dir
 		$resourcesDir = $this->resourcesDir . '/' . $name;
-		if (file_exists($resourcesDir)) {
+		if (is_dir($resourcesDir)) {
 			if (is_link($resourcesDir)) {
 				unlink($resourcesDir);
 			} else {
@@ -145,11 +141,10 @@ class StructureInstaller extends Object implements IInstaller
 		}
 	}
 
-
 	/**
-	 * @param array $arr1
-	 * @param array $arr2
-	 * @return array
+	 * @param mixed[] $arr1
+	 * @param mixed[] $arr2
+	 * @return mixed[]
 	 */
 	private function getRecursiveDiff($arr1, $arr2)
 	{
@@ -160,12 +155,12 @@ class StructureInstaller extends Object implements IInstaller
 			if (!is_array($arr1[$key])) {
 
 				// if key is numeric, remove the same value
-				if (is_numeric($key) && ($pos = array_search($arr1[$key], $arr2)) !== FALSE) {
+				if (is_numeric($key) && ($pos = array_search($arr1[$key], $arr2)) !== false) {
 					unset($arr1[$key]);
 				} //
 
 				// else remove the same key
-				else if ((!$isList && isset($arr2[$key])) || ($isList && $arr2IsList && array_search($item, $arr2) !== FALSE)) {
+				else if ((!$isList && isset($arr2[$key])) || ($isList && $arr2IsList && array_search($item, $arr2) !== false)) {
 					unset($arr1[$key]);
 				} //
 
@@ -185,7 +180,6 @@ class StructureInstaller extends Object implements IInstaller
 		return $arr1;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -194,18 +188,16 @@ class StructureInstaller extends Object implements IInstaller
 		return $this->configDir . '/config.neon';
 	}
 
-
 	/**
-	 * @return array
+	 * @return mixed[]
 	 */
 	private function loadConfig()
 	{
 		return Neon::decode(file_get_contents($this->getConfigPath()));
 	}
 
-
 	/**
-	 * @param $data
+	 * @param mixed[] $data
 	 */
 	private function saveConfig($data)
 	{
