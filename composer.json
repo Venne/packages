@@ -15,7 +15,7 @@
 		"kdyby/console": "@dev"
 	},
 	"require-dev": {
-		"nette/tester": "~1.0.0"
+		"nette/tester": "~1.2.0"
 	},
 	"minimum-stability": "dev",
 	"autoload": {
