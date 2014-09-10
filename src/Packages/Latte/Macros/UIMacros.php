@@ -90,7 +90,7 @@ class UIMacros extends MacroSet
 	 */
 	public function macroPath(MacroNode $node, PhpWriter $writer)
 	{
-		return $writer->write("echo \$basePath . '/' . \$presenter->context->getByType('Venne\Packages\PathResolver')->expandResource(%node.word)");
+		return $writer->write("echo \$basePath . '/' . \$pathResolver->expandResource(%node.word)");
 	}
 
 }
