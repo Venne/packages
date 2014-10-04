@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="venne/packages" default="build">
+
+	<property name="path.venne.packages.tester.executable" value="${path.bin}/tester"/>
+	<property name="path.venne.packages.phpcs.executable" value="${path.bin}/phpcs"/>
+	<property name="path.venne.packages.root" value="${path.vendor}/venne/packages"/>
+	<property name="path.venne.packages.build" value="${path.venne.packages.root}/build"/>
+	<property name="path.venne.packages.src" value="${path.venne.packages.root}/src"/>
+	<property name="path.venne.packages.tests" value="${path.venne.packages.root}/tests"/>
+	<property name="path.venne.packages.phpcs.ruleset" value="${path.venne.packages.build}/ruleset.xml"/>
+
+	<target name="build">
+	</target>
+
+	<target name="check" depends="check-php,tester"/>
+
+	<target name="check-php" depends="phpcs"/>
+
+	<target name="phpcs">
+		<exec
+				executable="${path.venne.packages.phpcs.executable}"
+				logoutput="true"
+				passthru="true"
+				checkreturn="true"
+				>
+			<arg value="--standard=${path.venne.packages.phpcs.ruleset}"/>
+			<arg value="--extensions=php"/>
+			<arg value="--encoding=utf-8"/>
+			<arg value="--tab-width=4"/>
+			<arg value="-sp"/>
+			<arg path="${path.venne.packages.src}"/>
+		</exec>
+	</target>
+
+	<target name="tester">
+		<exec
+				executable="${path.venne.packages.tester.executable}"
+				logoutput="true"
+				passthru="true"
+				checkreturn="true"
+				>
+			<arg path="${path.venne.packages.tests}"/>
+			<arg value="-s"/>
+		</exec>
+	</target>
+
+</project>
