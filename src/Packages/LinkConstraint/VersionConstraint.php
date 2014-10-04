@@ -96,8 +96,7 @@ class VersionConstraint implements ILinkConstraint
 			return $cache[$this->operator][$this->version][$provider->operator][$provider->version][$compareBranches];
 		}
 
-		return $cache[$this->operator][$this->version][$provider->operator][$provider->version][$compareBranches] =
-			$this->doMatchSpecific($provider, $compareBranches);
+		return $cache[$this->operator][$this->version][$provider->operator][$provider->version][$compareBranches] = $this->doMatchSpecific($provider, $compareBranches);
 	}
 
 	/**

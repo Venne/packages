@@ -85,7 +85,7 @@ class PackagesExtension extends CompilerExtension
 		);
 		foreach ($commands as $name => $cmd) {
 			$container->addDefinition($this->prefix(lcfirst($name) . 'Command'))
-				->setClass("{$cmd}Command")
+				->setClass(sprintf('%sCommand', $cmd))
 				->addTag(ConsoleExtension::COMMAND_TAG);
 		}
 
@@ -95,4 +95,3 @@ class PackagesExtension extends CompilerExtension
 	}
 
 }
-

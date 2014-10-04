@@ -288,7 +288,7 @@ class VersionParser
 			}
 
 			if (!$stabilitySuffix) {
-				$stabilitySuffix = "-dev";
+				$stabilitySuffix = '-dev';
 			}
 			$lowVersion = $this->manipulateVersionString($matches, $position, 0) . $stabilitySuffix;
 			$lowerBound = new VersionConstraint('>=', $lowVersion);
@@ -315,10 +315,10 @@ class VersionParser
 				$position = 1;
 			}
 
-			$lowVersion = $this->manipulateVersionString($matches, $position) . "-dev";
-			$highVersion = $this->manipulateVersionString($matches, $position, 1) . "-dev";
+			$lowVersion = $this->manipulateVersionString($matches, $position) . '-dev';
+			$highVersion = $this->manipulateVersionString($matches, $position, 1) . '-dev';
 
-			if ($lowVersion === "0.0.0.0-dev") {
+			if ($lowVersion === '0.0.0.0-dev') {
 				return array(new VersionConstraint('<', $highVersion));
 			}
 
@@ -430,7 +430,7 @@ class VersionParser
 			}
 
 			if (strpos($pair, ' ')) {
-				list($name, $version) = explode(" ", $pair, 2);
+				list($name, $version) = explode(' ', $pair, 2);
 				$result[] = array('name' => $name, 'version' => $version);
 			} else {
 				$result[] = array('name' => $pair);

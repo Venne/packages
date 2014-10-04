@@ -45,7 +45,7 @@ class ListCommand extends Command
 		// register available
 		foreach ($this->packageManager->registerAvailable() as $item) {
 			foreach ($item as $name => $action) {
-				$output->writeln("<info>{$action} : {$name}</info>");
+				$output->writeln(sprintf('<info>%s : %s</info>', $action, $name));
 			}
 		}
 
@@ -54,7 +54,7 @@ class ListCommand extends Command
 				$output->writeln(sprintf('<info>%25s</info> | status: <comment>%-12s</comment> | version: <comment>%s</comment>', $package->getName(), $this->packageManager->getStatus($package), $this->packageManager->getVersion($package)));
 			}
 		} catch (InvalidArgumentException $e) {
-			$output->writeln("<error>{$e->getMessage()}</error>");
+			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 		}
 	}
 

@@ -68,4 +68,3 @@ interface IPackage
 	public function getInstallers();
 
 }
-

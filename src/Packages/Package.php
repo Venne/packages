@@ -156,4 +156,3 @@ abstract class Package extends Object implements IPackage
 	}
 
 }
-

@@ -28,4 +28,3 @@ interface IInstaller
 	public function uninstall(IPackage $package);
 
 }
-

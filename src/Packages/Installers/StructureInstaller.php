@@ -157,10 +157,7 @@ class StructureInstaller extends Object implements IInstaller
 				// if key is numeric, remove the same value
 				if (is_numeric($key) && ($pos = array_search($arr1[$key], $arr2)) !== false) {
 					unset($arr1[$key]);
-				} //
-
-				// else remove the same key
-				else if ((!$isList && isset($arr2[$key])) || ($isList && $arr2IsList && array_search($item, $arr2) !== false)) {
+				} elseif ((!$isList && isset($arr2[$key])) || ($isList && $arr2IsList && array_search($item, $arr2) !== false)) {
 					unset($arr1[$key]);
 				} //
 
@@ -205,4 +202,3 @@ class StructureInstaller extends Object implements IInstaller
 	}
 
 }
-

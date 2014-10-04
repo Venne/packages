@@ -29,7 +29,11 @@ class Problem extends Object
 	public function addSolution(Job $job)
 	{
 		if ($this->hasSolution($job)) {
-			throw new InvalidArgumentException("Solution '{$job->getPackage()->getName()}:{$job->getAction()}' is already added.");
+			throw new InvalidArgumentException(sprintf(
+				'Solution \'%s:%s\' is already added.',
+				$job->getPackage()->getName(),
+				$job->getAction()
+			));
 		}
 
 		$this->solutions[$job->getPackage()->getName()] = $job;
@@ -52,4 +56,3 @@ class Problem extends Object
 		return array_merge($this->solutions);
 	}
 }
-

@@ -39,4 +39,3 @@ class VirtualPackage extends \Venne\Packages\Package
 	}
 
 }
-

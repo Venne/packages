@@ -77,7 +77,11 @@ class Solver extends Object
 					);
 
 				} else {
-					throw new InvalidArgumentException("Package '{$package->getName()}' depend on '{$name}', which was not found.");
+					throw new InvalidArgumentException(sprintf(
+						'Package \'%s\' depend on \'%s\', which was not found.',
+						$package->getName(),
+						$name
+					));
 				}
 			}
 		}
@@ -107,7 +111,11 @@ class Solver extends Object
 							$problem->addSolution($job);
 						}
 					} else {
-						throw new InvalidArgumentException("Package '{$sourcePackage->getName()}' depend on '{$package->getName()}'.");
+						throw new InvalidArgumentException(sprintf(
+							'Package \'%s\' depend on \'%s\'.',
+							$sourcePackage->getName(),
+							$package->getName()
+						));
 					}
 				}
 			}
@@ -123,4 +131,3 @@ class Solver extends Object
 	}
 
 }
-

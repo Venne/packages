@@ -45,33 +45,33 @@ class SyncCommand extends Command
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		if ($input->getOption('composer')) {
-			$output->writeln("+---------------------------------+");
-			$output->writeln("| Package manager synchronization |");
-			$output->writeln("+---------------------------------+");
+			$output->writeln('+---------------------------------+');
+			$output->writeln('| Package manager synchronization |');
+			$output->writeln('+---------------------------------+');
 		}
 
 		// register available
 		foreach ($this->packageManager->registerAvailable() as $item) {
 			foreach ($item as $name => $action) {
-				$output->writeln("<info>{$action} : {$name}</info>");
+				$output->writeln(sprintf('<info>%s : %s</info>', $action, $name));
 			}
 		}
 
 		try {
 			foreach ($this->packageManager->installAvailable() as $item) {
 				foreach ($item as $name => $action) {
-					$output->writeln("<info>{$action} : {$name}</info>");
+					$output->writeln(sprintf('<info>%s : %s</info>', $action, $name));
 				}
 			}
 
 			foreach ($this->packageManager->uninstallAbsent() as $item) {
 				foreach ($item as $name => $action) {
-					$output->writeln("<info>{$action} : {$name}</info>");
+					$output->writeln(sprintf('<info>%s : %s</info>', $action, $name));
 				}
 			}
 
 		} catch (InvalidArgumentException $e) {
-			$output->writeln("<error>{$e->getMessage()}</error>");
+			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 		}
 	}
 

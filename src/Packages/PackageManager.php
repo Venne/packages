@@ -94,16 +94,16 @@ class PackageManager extends Object
 	private $metadataSources = array();
 
 	/** @var mixed[] */
-	private $_packageConfig;
+	private $packageConfig;
 
 	/** @var \Venne\Packages\IPackage[] */
-	private $_packages;
+	private $packages;
 
 	/** @var array */
-	private $_globalMetadata;
+	private $globalMetadata;
 
 	/** @var array */
-	private $_lockFileData;
+	private $lockFileData;
 
 	/** @var \Venne\Packages\Version\VersionParser */
 	private $versionParser;
@@ -158,7 +158,7 @@ class PackageManager extends Object
 	 */
 	private function reloadInfo()
 	{
-		$this->_packages = null;
+		$this->packages = null;
 	}
 
 	/**
@@ -273,7 +273,7 @@ class PackageManager extends Object
 					$this->install($job->getPackage());
 					$actions[] = array($job->getPackage()->getName() => self::ACTION_INSTALL);
 
-				} else if ($job->getAction() === Job::ACTION_UNINSTALL) {
+				} elseif ($job->getAction() === Job::ACTION_UNINSTALL) {
 					$this->uninstall($job->getPackage());
 					$actions[] = array($job->getPackage()->getName() => self::ACTION_UNINSTALL);
 
@@ -415,14 +415,14 @@ class PackageManager extends Object
 	 */
 	public function getPackages()
 	{
-		if ($this->_packages === null) {
-			$this->_packages = array();
+		if ($this->packages === null) {
+			$this->packages = array();
 			foreach ($this->getPackageConfig() as $name => $values) {
-				$this->_packages[$name] = $this->createInstance($name);
+				$this->packages[$name] = $this->createInstance($name);
 			}
 		}
 
-		return $this->_packages;
+		return $this->packages;
 	}
 
 	/**
@@ -438,7 +438,7 @@ class PackageManager extends Object
 	 */
 	private function & getPackageConfig()
 	{
-		if ($this->_packageConfig === null) {
+		if ($this->packageConfig === null) {
 			$config = new PhpAdapter;
 
 			if (!is_file($this->getPackageConfigPath())) {
@@ -446,16 +446,16 @@ class PackageManager extends Object
 				file_put_contents($this->getPackageConfigPath(), $config->dump(array()));
 			}
 
-			$this->_packageConfig = $config->load($this->getPackageConfigPath());
+			$this->packageConfig = $config->load($this->getPackageConfigPath());
 		}
 
-		return $this->_packageConfig;
+		return $this->packageConfig;
 	}
 
 	private function savePackageConfig()
 	{
 		$config = new PhpAdapter;
-		file_put_contents($this->getPackageConfigPath(), $config->dump($this->_packageConfig));
+		file_put_contents($this->getPackageConfigPath(), $config->dump($this->packageConfig));
 	}
 
 	/**
@@ -542,8 +542,8 @@ class PackageManager extends Object
 	 */
 	private function getGlobalMetadata(IPackage $package)
 	{
-		if ($this->_globalMetadata === null) {
-			$this->_globalMetadata = array();
+		if ($this->globalMetadata === null) {
+			$this->globalMetadata = array();
 
 			foreach ($this->metadataSources as $source) {
 				if (substr($source, 0, 7) == 'http://' || substr($source, 0, 8) == 'https://') {
@@ -562,18 +562,18 @@ class PackageManager extends Object
 				}
 
 				if ($data) {
-					$this->_globalMetadata = Arrays::mergeTree($this->_globalMetadata, Json::decode($data, Json::FORCE_ARRAY));
+					$this->globalMetadata = Arrays::mergeTree($this->globalMetadata, Json::decode($data, Json::FORCE_ARRAY));
 				}
 			}
 
 		}
 
-		if (!isset($this->_globalMetadata[$package->getName()])) {
+		if (!isset($this->globalMetadata[$package->getName()])) {
 			return null;
 		}
 
 		$versionProvide = new VersionConstraint('==', $this->getVersion($package));
-		foreach ($this->_globalMetadata[$package->getName()] as $data) {
+		foreach ($this->globalMetadata[$package->getName()] as $data) {
 			$versionRequire = $this->versionParser->parseConstraints($data['version']);
 			if ($versionRequire->matches($versionProvide)) {
 				return $data['metadata'];
@@ -586,17 +586,17 @@ class PackageManager extends Object
 	 */
 	private function getLockFileData()
 	{
-		if ($this->_lockFileData === null) {
-			$this->_lockFileData = array();
+		if ($this->lockFileData === null) {
+			$this->lockFileData = array();
 			$data = Json::decode(file_get_contents(dirname($this->libsDir) . '/composer.lock'), Json::FORCE_ARRAY);
 
 			foreach ($data['packages'] as $package) {
 				$package['version'] = $this->versionParser->normalize($package['version']);
-				$this->_lockFileData[$package['name']] = $package;
+				$this->lockFileData[$package['name']] = $package;
 			}
 		}
 
-		return $this->_lockFileData;
+		return $this->lockFileData;
 	}
 
 	/**
@@ -647,4 +647,3 @@ class PackageManager extends Object
 	}
 
 }
-

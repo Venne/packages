@@ -50,7 +50,7 @@ class InstallCommand extends Command
 		// register available
 		foreach ($this->packageManager->registerAvailable() as $item) {
 			foreach ($item as $name => $action) {
-				$output->writeln("<info>{$action} : {$name}</info>");
+				$output->writeln(sprintf('<info>%s : %s</info>', $action, $name));
 			}
 		}
 
@@ -59,15 +59,15 @@ class InstallCommand extends Command
 		try {
 			$problem = $this->packageManager->testInstall($package);
 		} catch (InvalidArgumentException $e) {
-			$output->writeln("<error>{$e->getMessage()}</error>");
+			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 
 			return;
 		}
 
 		if (!$input->getOption('noconfirm') && count($problem->getSolutions()) > 0) {
-			$output->writeln("<info>install : {$package->getName()}</info>");
+			$output->writeln(sprintf('<info>install : %s</info>', $package->getName()));
 			foreach ($problem->getSolutions() as $job) {
-				$output->writeln("<info>{$job->getAction()} : {$job->getPackage()->getName()}</info>");
+				$output->writeln(sprintf('<info>%s : %s</info>', $job->getAction(), $job->getPackage()->getName()));
 			}
 
 			$dialog = $this->getHelperSet()->get('dialog');
@@ -80,18 +80,18 @@ class InstallCommand extends Command
 			foreach ($problem->getSolutions() as $job) {
 				if ($job->getAction() === Job::ACTION_INSTALL) {
 					$this->packageManager->install($job->getPackage());
-					$output->writeln("Package '{$job->getPackage()->getName()}' has been installed.");
+					$output->writeln(sprintf('Package \'%s\' has been installed.', $job->getPackage()->getName()));
 
-				} else if ($job->getAction() === Job::ACTION_UNINSTALL) {
+				} elseif ($job->getAction() === Job::ACTION_UNINSTALL) {
 					$this->packageManager->uninstall($job->getPackage());
-					$output->writeln("Package '{$job->getPackage()->getName()}' has been uninstalled.");
+					$output->writeln(sprintf('Package \'%s\' has been uninstalled.', $job->getPackage()->getName()));
 
 				}
 			}
 			$this->packageManager->install($package);
-			$output->writeln("Package '{$input->getArgument('package')}' has been installed.");
+			$output->writeln(sprintf('Package \'%s\' has been installed.', $input->getArgument('package')));
 		} catch (InvalidArgumentException $e) {
-			$output->writeln("<error>{$e->getMessage()}</error>");
+			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 		}
 	}
 

@@ -44,7 +44,11 @@ class Job extends Object
 	public function __construct($action, IPackage $package)
 	{
 		if (!isset(self::$actions[$action])) {
-			throw new InvalidArgumentException("Action must be one of '" . join(', ', self::$actions) . "'. '{$action}' is given.");
+			throw new InvalidArgumentException(sprintf(
+				'Action must be one of \'%s\'. \'%s\' is given.',
+				join(', ', self::$actions),
+				$action
+			));
 		}
 
 		$this->action = $action;
@@ -67,4 +71,3 @@ class Job extends Object
 		return $this->package;
 	}
 }
-
