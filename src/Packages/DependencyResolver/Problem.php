@@ -55,4 +55,5 @@ class Problem extends Object
 	{
 		return array_merge($this->solutions);
 	}
+
 }
