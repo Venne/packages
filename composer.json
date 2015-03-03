@@ -2,6 +2,7 @@
 	"name": "venne/packages",
 	"description": "Simple solution for managing packages in Nette framework",
 	"keywords": ["nette", "packages", "manager"],
+	"homepage": "http://venne.cz",
 	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 	"authors": [
 		{
@@ -9,17 +10,22 @@
 			"homepage": "http://josef-kriz.cz"
 		}
 	],
+	"support": {
+		"email": "info@venne.cz",
+		"issues": "https://github.com/Venne/packages/issues"
+	},
 	"require": {
-		"php": ">=5.4.0",
-		"nette/nette": "~2.2.0@dev",
+		"php": ">=5.5.0",
+		"nette/di": "2.3@dev",
+		"nette/utils": "2.3@dev",
+		"latte/latte": "2.3@dev",
 		"kdyby/console": "@dev"
 	},
 	"require-dev": {
-		"nette/tester": "~1.2.0",
-		"phing/phing": "~2.8.0",
+		"nette/tester": "~1.3.2",
+		"phing/phing": "~2.10.1",
 		"squizlabs/php_codesniffer": "~1.5.0"
 	},
-	"minimum-stability": "dev",
 	"autoload": {
 		"psr-4": {
 			"Venne\\Packages\\": "src/Packages/"
